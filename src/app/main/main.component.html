@@ -1,0 +1,34 @@
+<div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
+  <mat-toolbar color="primary" class="example-toolbar" style="color:#202020;background: #fff;border-bottom:1px #ccc solid;">
+    <button mat-icon-button (click)="snav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <h1 class="example-app-name"><span class="re-title">ReInvent</span></h1>
+    <span class="main-search">
+      <input class="main-search-input" matInput placeholder="Cari">
+      <button mat-button class="remove-search" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+        <mat-icon>search</mat-icon>
+      </button>
+    </span>
+    <span class="spacer"></span>
+    <span style="color:#202020;margin-right: 10px;">
+      <button mat-button mat-icon-button (click)="value=''">
+        <mat-icon>person</mat-icon>
+      </button>
+    </span>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+    <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
+      fixedTopGap="56">
+      <mat-nav-list>
+        <a mat-list-item routerLink="." *ngFor="let nav of fillerNav">
+          <mat-icon>{{nav.Icon}}</mat-icon>&nbsp;&nbsp;{{nav.Text}}
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
