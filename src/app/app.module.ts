@@ -45,6 +45,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import { ArticleFeedComponent } from './com/article-feed/article-feed.component';
 import { ArticleComponent } from './com/article/article.component';
 import { UserProfileComponent } from './com/user-profile/user-profile.component';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 
 @NgModule({
@@ -94,7 +95,8 @@ import { UserProfileComponent } from './com/user-profile/user-profile.component'
     MatSnackBarModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    FlexLayoutModule
   ],
   providers: [],
   bootstrap: [AppComponent]

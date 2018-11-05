@@ -10,7 +10,7 @@ import {Menu} from '../../app/model';
 export class MainComponent implements OnDestroy {
   mobileQuery: MediaQueryList;
   //fillerNav:Menu[] = Menus; 
-  fillerNav = Menus;
+  fillerNav = menus;
 
   fillerContent = Array.from({length: 50}, () =>
       `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
@@ -34,7 +34,7 @@ export class MainComponent implements OnDestroy {
 }
 
 
-let Menus:Menu[] = [
+let menus:Menu[] = [
   {Text:"Beranda", Path:"#", Icon:"home"},
   {Text:"Artikel", Path:"#", Icon:"description"},
   {Text:"Tanya Saya", Path:"#", Icon:"question_answer"},

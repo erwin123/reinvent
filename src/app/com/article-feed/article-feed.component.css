@@ -1,0 +1,12 @@
+.example-header-image {
+    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+    background-size: cover;
+}
+
+.content {
+    margin: 20px 5px 20px 5px;
+}
+
+.article-card{
+    margin-bottom: 20px;
+}

@@ -4,17 +4,33 @@
       <mat-icon>menu</mat-icon>
     </button>
     <h1 class="example-app-name"><span class="re-title">ReInvent</span></h1>
+    <span class="spacer"></span>
     <span class="main-search">
       <input class="main-search-input" matInput placeholder="Cari">
       <button mat-button class="remove-search" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
         <mat-icon>search</mat-icon>
       </button>
     </span>
-    <span class="spacer"></span>
-    <span style="color:#202020;margin-right: 10px;">
-      <button mat-button mat-icon-button (click)="value=''">
+    <span class="spacer-right"></span>
+
+    <span style="color:#202020;margin-right: 0px;">
+      <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>person</mat-icon>
       </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>face</mat-icon>
+          <span>Profil</span>
+        </button>
+        <button mat-menu-item disabled>
+          <mat-icon>settings</mat-icon>
+          <span>Setelan</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Keluar</span>
+        </button>
+      </mat-menu>
     </span>
   </mat-toolbar>
 
@@ -28,7 +44,13 @@
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
-      <router-outlet></router-outlet>
+      <div fxLayout="row" fxLayoutAlign="center none">
+        <div fxFlex="25" fxHide.xs fxFlex.sm="10"></div>
+        <div fxFlex="50" fxFlex.xs="98" fxFlex.sm="80">
+            <router-outlet></router-outlet>
+        </div>
+        <div fxFlex="25" fxHide.xs fxFlex.sm="10"></div>
+      </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

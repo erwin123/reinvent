@@ -38,5 +38,6 @@ export class User{
     Gender:number;
     Phone:string;
     Address:string;
+    City:string;
     Photo:string;
 }

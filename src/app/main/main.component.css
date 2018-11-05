@@ -15,7 +15,7 @@
   }
   
   h1.example-app-name {
-    margin-left: 3px;
+    margin-left: 0px;
   }
   
   .example-sidenav-container {
@@ -37,11 +37,11 @@
 
   .main-search{
     width: 35%;
+    max-width: 400px;
   }
 
   .main-search-input{
       color:#202020;
-      margin-left:10px;
       font-size: 14px;
       padding:5px;
       border-radius: 5px;
@@ -50,5 +50,8 @@
   }
 
   .spacer {
-    flex: 1 1 auto;
+    flex: 0.8;
+  }
+  .spacer-right {
+    flex: 1;
   }
