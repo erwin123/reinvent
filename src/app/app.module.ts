@@ -46,6 +46,8 @@ import { ArticleFeedComponent } from './com/article-feed/article-feed.component'
 import { ArticleComponent } from './com/article/article.component';
 import { UserProfileComponent } from './com/user-profile/user-profile.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import { CategoryComponent } from './com/category/category.component';
+import { SettingComponent } from './com/setting/setting.component';
 
 
 @NgModule({
@@ -56,7 +58,9 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     LandingComponent,
     ArticleFeedComponent,
     ArticleComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    CategoryComponent,
+    SettingComponent
   ],
   imports: [
     BrowserModule,

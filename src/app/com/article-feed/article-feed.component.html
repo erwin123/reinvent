@@ -12,8 +12,12 @@
       </p>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button>LIKE</button>
-      <button mat-button>SHARE</button>
+      <button mat-icon-button (click)="clickLike()" [class.like]="likeIt">
+        <mat-icon aria-label="like it">favorite</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon aria-label="share it">share</mat-icon>
+      </button>
     </mat-card-actions>
   </mat-card>
 </div>

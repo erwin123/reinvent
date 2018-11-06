@@ -5,6 +5,7 @@ export class Menu {
 }
 
 export class Article{
+    Id:number;
     Title:string;
     Text:string;
     CreatedBy:string;
@@ -18,6 +19,7 @@ export class Article{
 }
 
 export class Comment{
+    Id:number;
     ArticleCode:string;
     CreatedBy:string;
     CreatedDate:string;
@@ -26,11 +28,24 @@ export class Comment{
 }
 
 export class ArticleLikes{
+    Id:number;
     ArticleCode:string;
     Username:string;
 }
 
+export class UserCategory{
+    Username:string;
+    CategoryCode:string;
+}
+
+export class Category{
+    Id:number;
+    CategoryName:string;
+    CategoryCode:string;
+}
+
 export class User{
+    Id;
     Username:string;
     FirstName:string;
     LastName:string;
