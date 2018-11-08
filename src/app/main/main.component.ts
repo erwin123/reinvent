@@ -1,6 +1,8 @@
 import {MediaMatcher} from '@angular/cdk/layout';
-import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy,Inject} from '@angular/core';
 import {Menu} from '../../app/model';
+import {LoginComponent} from '../com/login/login.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-main',
@@ -21,10 +23,22 @@ export class MainComponent implements OnDestroy {
 
   private _mobileQueryListener: () => void;
 
-  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
+  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher,public dialog: MatDialog) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
+  }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(LoginComponent, {
+      width: '300px',
+      data: {name: "", animal: ""}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      //this.animal = result;
+    });
   }
 
   ngOnDestroy(): void {
@@ -41,3 +55,4 @@ let menus:Menu[] = [
   {Text:"Belajar & Mengajar", Path:"#", Icon:"school"},
   {Text:"Tentang Kami", Path:"#", Icon:"perm_device_information"}
 ]
+

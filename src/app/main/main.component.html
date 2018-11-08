@@ -3,7 +3,7 @@
     <button mat-icon-button (click)="snav.toggle()">
       <mat-icon>menu</mat-icon>
     </button>
-    <h1 class="example-app-name"><span class="re-title">ReInvent</span></h1>
+    <h1 class="example-app-name"><span class="re-title">ReVamp</span></h1>
     <span class="spacer"></span>
     <span class="main-search">
       <input class="main-search-input" matInput placeholder="Cari">
@@ -18,7 +18,8 @@
         <mat-icon>person</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item>
+        
+        <button mat-menu-item (click)="openDialog()">
           <mat-icon>face</mat-icon>
           <span>Profil</span>
         </button>

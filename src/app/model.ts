@@ -56,3 +56,8 @@ export class User{
     City:string;
     Photo:string;
 }
+
+export class Account{
+    username:string="";
+    password:string="";
+}
