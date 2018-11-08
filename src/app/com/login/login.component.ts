@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
       socialPlatformProvider = GoogleLoginProvider.PROVIDER_ID;
       this.socialAuthService.signIn(socialPlatformProvider).then(
         (userData) => {
-          console.log(userData);
+          console.log(userData.idToken);
           this.loginService.login_g(userData.email, userData.idToken).subscribe(login =>{
             console.log(login);
           });

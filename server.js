@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const session = require('express-session');
+
 const http = require('http');
 
 const cors = require('cors');
@@ -10,6 +10,7 @@ const fileUpload = require('express-fileupload');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const timeout = require('connect-timeout'); //express v4
+const session = require('cookie-session');
 var cookieParser = require('cookie-parser');
 
 // Cookie parsing needed for sessions
@@ -18,40 +19,20 @@ app.use(cookieParser('notsosecretkey'));
 // Session framework
 app.use(session({
     secret: "notsosecretkey123",
-    name: "cookie_name",
+    name: "cr_s",
     proxy: true,
     resave: true,
     saveUninitialized: true
 }));
 
-
-
-app.use(function (req, res, next) {
-    req.session.name = "test";
-    next()
-})
-
 //Cors
-// app.use(cors());
-// app.options('*', cors());
-app.use(function (req, res, next) {
-    console.log("call");
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', '*');
+//app.use(cors());
+const corsOptions = {
+    origin: true,
+    credentials: true,
 
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', '*');
-
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
-    next();
-});
+}
+app.use(cors(corsOptions));
 
 // Parsers
 app.use(bodyParser.json());
