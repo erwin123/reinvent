@@ -1,3 +1,44 @@
-<p>
-  user-profile works!
-</p>
+<div class="profile-container">
+  <mat-card class="profile-card">
+    <mat-card-content>
+      <h2>Profil</h2>
+      <h6><i class="material-icons" style="color:#0077ff;font-size:18px;display: inline;vertical-align: middle;">verified_user</i>
+        Lengkapi profil agar menjadi verified akun</h6>
+      <div class="profile-form">
+        <img class="profile-pic" *ngIf="profile.Photo" [src]="profile.Photo" alt="" />
+        <mat-form-field>
+          <input matInput placeholder="Email" [(ngModel)]="profile.Username" disabled>
+        </mat-form-field>
+        <mat-form-field style="width: 45% !important;margin-right: 5%;">
+          <input matInput placeholder="Nama Depan" [(ngModel)]="profile.FirstName">
+        </mat-form-field>
+        <mat-form-field style="width: 45% !important;;margin-left: 5%;">
+          <input matInput placeholder="Nama Belakang" [(ngModel)]="profile.LastName">
+        </mat-form-field>
+        <mat-form-field>
+          <input [(ngModel)]="profile.BirthDate" matInput [matDatepicker]="dp" placeholder="Tanggal Lahir" [formControl]="date">
+          <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+          <mat-datepicker #dp></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput (keypress)="numberOnly($event)" placeholder="Handphone (Whatsapp)" [(ngModel)]="profile.Phone">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Alamat" [(ngModel)]="profile.Address">
+        </mat-form-field>
+        <mat-radio-group [(ngModel)]="profile.Gender">
+          <mat-radio-button [value]="1"><img src="https://img.icons8.com/ios-glyphs/30/000000/standing-man.png"></mat-radio-button>
+          <mat-radio-button [value]="2"><img src="https://img.icons8.com/ios-glyphs/30/000000/standing-woman.png"></mat-radio-button>
+        </mat-radio-group>
+        <mat-form-field>
+          <textarea matInput placeholder="Deskripsi Diri" [(ngModel)]="profile.About"></textarea>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-flat-button color="primary" (click)="save()">
+        <i class="material-icons" style="font-size:20px;">face</i> SIMPAN
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

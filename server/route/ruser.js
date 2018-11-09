@@ -28,8 +28,8 @@ router.post('/', function (req, res, next) {
     });
 });
 
-router.put('/:key', function (req, res, next) {
-    user.updateUser(req.params.key, req.body, function (err, rows) {
+router.put('/', function (req, res, next) {
+    user.updateUser(req.body, function (err, rows) {
         if (err) { res.json(err); }
         else { res.json(rows); }
     });

@@ -13,6 +13,7 @@ import { AppRoutingModule } from './/app-routing.module';
 import { LoginComponent } from './com/login/login.component';
 import { MainComponent } from './main/main.component';
 import { LandingComponent } from './com/landing/landing.component';
+import { AuthguardService } from './services/authguard.service';
 
 //Angular Material Components
 import { MatCheckboxModule } from '@angular/material';
@@ -60,6 +61,7 @@ import {
   LinkedinLoginProvider,
   VkontakteLoginProvider,
 } from "angular-6-social-login-v2";
+import { NotifbarComponent } from './com/notifbar/notifbar.component';
 
 
 export function getAuthServiceConfigs() {
@@ -94,7 +96,8 @@ export function getAuthServiceConfigs() {
     ArticleComponent,
     UserProfileComponent,
     CategoryComponent,
-    SettingComponent
+    SettingComponent,
+    NotifbarComponent
   ],
   imports: [
     BrowserModule,
@@ -141,7 +144,7 @@ export function getAuthServiceConfigs() {
     MatPaginatorModule,
     FlexLayoutModule
   ],
-  providers: [{
+  providers: [AuthguardService, {
     provide: AuthServiceConfig,
     useFactory: getAuthServiceConfigs
   }],

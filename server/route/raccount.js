@@ -7,10 +7,14 @@ var config = require('../config');
 var router = express.Router();
 
 
-router.get('/setcookie', function (req, res, next) {
-
+router.get('/privatecookiecheck', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
-    res.status(200).send({ name: req.session.name });
+    res.status(200).send({ token: req.session.token, id:req.session.id, prv:req.session.prv });
+});
+
+router.get('/publiccookiecheck', function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send({ token: req.session.token, id:req.session.id, prv:req.session.prv });
 });
 
 router.get('/', function (req, res, next) {
@@ -53,37 +57,41 @@ router.delete('/:key', function (req, res, next) {
 });
 
 
-//region account
-
+//region account google and fb
 router.post('/login/fb', function (req, res, next) {
 
     if (req.body.token) {
         //check token to fb
         let options = {
             host: "graph.facebook.com",
-            path: '/' + req.body.userid + '?fields=id,name,first_name,last_name,email,picture&access_token=' + req.body.token,
+            path: '/' + req.body.id + '?fields=id,name,first_name,last_name,email,picture&access_token=' + req.body.token,
             method: 'GET'
         };
         let reqFb = https.request(options, (resFb) => {
             resFb.setEncoding('utf8');
             resFb.on('data', (chunk) => {
                 let obj = JSON.parse(chunk);
+                let photo = "https://graph.facebook.com/" + obj.id + "/picture?type=large"
                 account.getAllAccountByCriteria({ Username: obj.email }, (err, acc) => {
                     if (acc[0]) //exist user
                     {
-                        req.session.name = req.body.token;
+                        req.session.token = req.body.token;
+                        req.session.id = req.body.id;
+                        req.session.prv = "fb";
                         account.lastLogin(obj.email, (err, updateLogin) => {
                             res.setHeader('Content-Type', 'application/json');
-                            res.status(200).send({ auth: true, token: req.body.token, username: req.body.username, orn: 'fb' });
+                            res.status(200).send({ profilepic:photo, auth: true, username: req.body.username, orn: 'fb' });
                         })
                     } else {
-                        req.session.name = req.body.token;
+                        req.session.token = req.body.token;
+                        req.session.id = req.body.id;
+                        req.session.prv = "fb";
                         account.register({ Username: obj.email, Password: "fromfb", AddedBy: "facebook" }, (err, accReg) => {
                             res.setHeader('Content-Type', 'application/json');
-                            res.status(200).send({ auth: true, token: req.body.token, username: req.body.username, orn: 'fb' });
+                            res.status(200).send({ profilepic:photo, auth: true, username: req.body.username, orn: 'fb' });
                         });
 
-                        user.insertUser({ Username: obj.email, FirstName: obj.first_name, LastName: obj.last_name, Photo: "https://graph.facebook.com/" + obj.id + "/picture?type=large" }, (err, addUser) => {
+                        user.insertUser({ Username: obj.email, FirstName: obj.first_name, LastName: obj.last_name, Photo: photo }, (err, addUser) => {
 
                         })
                     }
@@ -114,22 +122,27 @@ router.post('/login/g', function (req, res, next) {
 
         let reqG = https.request(options, (resG) => {
             resG.setEncoding('utf8');
+            let responseString = '';
             resG.on('data', (chunk) => {
-                let obj = chunk;
-                obj = JSON.parse(obj.toString().replace('typ": "JWT"','').substring(0,obj.length-5));
+                responseString += chunk;
+                let obj = JSON.parse(responseString);
                 account.getAllAccountByCriteria({ Username: obj.email }, (err, acc) => {
                     if (acc[0]) //exist user
                     {
-                        req.session.name = req.body.token;
+                        req.session.token = req.body.token;
+                        req.session.id = req.body.id;
+                        req.session.prv = "g";
                         account.lastLogin(obj.email, (err, updateLogin) => {
                             res.setHeader('Content-Type', 'application/json');
-                            res.status(200).send({ auth: true, token: req.body.token, username: req.body.username, orn: 'g' });
+                            res.status(200).send({ profilepic:obj.picture, auth: true, username: obj.email, orn: 'g' });
                         })
                     } else {
-                        req.session.name = req.body.token;
+                        req.session.token = req.body.token;
+                        req.session.id = req.body.id;
+                        req.session.prv = "g";
                         account.register({ Username: obj.email, Password: "fromgoogle", AddedBy: "google" }, (err, accReg) => {
                             res.setHeader('Content-Type', 'application/json');
-                            res.status(200).send({ auth: true, token: req.body.token, username: req.body.username, orn: 'g' });
+                            res.status(200).send({ profilepic:obj.picture, auth: true, username: obj.email, orn: 'g' });
                         });
 
                         user.insertUser({ Username: obj.email, FirstName: obj.given_name, LastName: obj.family_name, Photo: obj.picture }, (err, addUser) => {
@@ -147,30 +160,6 @@ router.post('/login/g', function (req, res, next) {
     } else {
         res.status(401);
         res.send('Sorry, access not passed');
-    }
-});
-
-router.post('/login', function (req, res, next) {
-    if (req.body) {
-        account.login(req.body.username, req.body.password, function (err, rows, fields) {
-            if (err) { res.status(500); res.send('Internal Server Error'); }
-            else {
-                if (rows[0][0]) {
-                    // create a token
-                    let token = jwt.sign({ username: req.body.username }, config.secret, {
-                        expiresIn: 3600 // expires in 24 hours
-                    });
-                    let result = rows[0][0];
-
-                    res.setHeader('Content-Type', 'application/json');
-                    res.status(200).send({ auth: true, token: token, username: req.body.username, g: false });
-                }
-                else {
-                    res.status(401);
-                    res.send('Sorry, access not passed');
-                }
-            }
-        });
     }
 });
 

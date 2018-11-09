@@ -25,8 +25,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-//Cors
-//app.use(cors());
+//Cors and allow credential
 const corsOptions = {
     origin: true,
     credentials: true,
@@ -47,16 +46,18 @@ app.use(express.static(path.join(__dirname, 'dist')));
 let auth = (req, res, next) => {
 
     let uri = String(req.originalUrl);
-    if (uri.indexOf('/account/setcookie') >= 0 || uri.indexOf('/account/login/fb') >= 0 || uri.indexOf('/account/login/g') >= 0 || uri.indexOf('/account/login') >= 0 || uri.indexOf('/account/register') >= 0)
-        next();
+    if (uri.indexOf('/account/privatecookiecheck') >= 0 ||
+        uri.indexOf('/account/login/fb') >= 0 ||
+        uri.indexOf('/account/login/g') >= 0)
+        next(); //by pass for authenticate
     else {
-        var token = req.headers['x-access-token'];
-        if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
-
-        jwt.verify(token, "lumixgm1", function (err, decoded) {
-            if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-            next();
-        });
+        //we are going to authenticate with sso provider
+        if (req.session.prv === "g") {
+            //begin auth
+        } else if (req.session.prv === "fb") {
+            //begin auth
+        }
+        next();
     }
 }
 app.use(auth);
@@ -64,10 +65,12 @@ app.use(auth);
 //our route
 const user = require('./server/route/ruser');
 const account = require('./server/route/raccount');
-
+const cat = require('./server/route/rcategory');
 app.use('/api/user', user);
 app.use('/api/account', account);
+app.use('/api/cat', cat);
 
+//set timeout
 app.use(timeout('150s'));
 app.use(haltOnTimedout);
 function haltOnTimedout(req, res, next) {
@@ -78,8 +81,6 @@ function haltOnTimedout(req, res, next) {
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
-
-
 
 //Set Port
 const port = '3005';

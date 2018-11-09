@@ -4,7 +4,7 @@ db.connect(db.trx,(done)=>{});
 exports.getAllUser = function (done) {
     db.get(db.trx, function (err, connection) {
         if (err) return done('Database problem')
-        connection.query('SELECT Id,Username,FirstName,LastName,BirthDate,Gender,Phone,Address,Photo FROM User', function (err, rows) {
+        connection.query('SELECT Id,Username,FirstName,LastName,BirthDate,Gender,Phone,Address,Photo,About FROM User', function (err, rows) {
             connection.release();
             if (err) return done(err)
             done(null, rows)
@@ -16,7 +16,7 @@ exports.getAllUserByCriteria = function (User, done) {
     var wh = db.whereCriteriaGenerator(User);
     db.get(db.trx, function (err, connection) {
         if (err) return done('Database problem')
-        connection.query("SELECT Id,Username,FirstName,LastName,BirthDate,Gender,Phone,Address,Photo FROM User"+wh, function (err, rows) {
+        connection.query("SELECT Id,Username,FirstName,LastName,BirthDate,Gender,Phone,Address,Photo,About FROM User"+wh, function (err, rows) {
             connection.release();
             if (err) return done(err)
             done(null, rows)
@@ -25,7 +25,7 @@ exports.getAllUserByCriteria = function (User, done) {
 }
 
 exports.insertUser = function (User, done) {
-    var values = [User.Username,User.FirstName,User.LastName,User.BirthDate,User.Gender,User.Phone,User.Address,User.Photo];
+    var values = [User.Username,User.FirstName,User.LastName,User.BirthDate,User.Gender,User.Phone,User.Address,User.Photo,User.About];
     db.get(db.trx, function (err, connection) {
         if (err) return done('Database problem')
         connection.query('CALL sp_UserGenerator(?,?,?,?,?,?,?,?)', values, function (err, result) {
@@ -37,10 +37,10 @@ exports.insertUser = function (User, done) {
 }
 
 exports.updateUser = function (User, done) {
-    var values = [User.FirstName,User.LastName,User.BirthDate,User.Gender,User.Phone,User.Address,User.Photo,User.Username]
+    var values = [User.FirstName,User.LastName,User.BirthDate,User.Gender,User.Phone,User.Address,User.Photo,User.About,User.Username]
     db.get(db.trx, function (err, connection) {
         if (err) return done('Database problem')
-        connection.query('UPDATE User SET FirstName=?,LastName=?,BirthDate=?,Gender=?,Phone=?,Address=?,Photo=? where Username=?', values, function (err, result) {
+        connection.query('UPDATE User SET FirstName=?,LastName=?,BirthDate=?,Gender=?,Phone=?,Address=?,Photo=?, About=? where Username=?', values, function (err, result) {
             connection.release();
             if (err) return done(err)
             done(null, result)

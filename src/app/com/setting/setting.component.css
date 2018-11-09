@@ -1,0 +1,19 @@
+.setting-container{
+    margin: 30px 5px 30px 5px;
+}
+.setting-form{
+    text-align: center;
+}
+.setting-form > *{
+    width: 100%;
+}
+
+.category{
+    height: 80px;
+    border-radius: 4px;
+    margin: 5px;
+    padding: 5px;
+    color:#fff;
+    font-weight: bold;
+}
+

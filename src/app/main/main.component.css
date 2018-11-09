@@ -41,12 +41,12 @@
   }
 
   .main-search-input{
-      color:#202020;
-      font-size: 14px;
-      padding:5px;
-      border-radius: 5px;
-      border:1px #ccc solid;
-      width: 100%;
+      color:#202020 !important;
+      font-size: 14px !important;
+      padding:5px !important;
+      border-radius: 5px !important;
+      border:1px #ccc solid !important;
+      width: 100% !important;
   }
 
   .spacer {
@@ -54,4 +54,10 @@
   }
   .spacer-right {
     flex: 1;
+  }
+
+  .profile-pic-toolbar{
+    border-radius: 50%;
+    height: 35px;
+    width:  35px;
   }

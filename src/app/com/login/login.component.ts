@@ -1,28 +1,29 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { FormControl, Validators } from '@angular/forms';
 import {
   AuthService,
   FacebookLoginProvider,
   GoogleLoginProvider
 } from 'angular-6-social-login-v2';
 import { LoginService } from 'src/app/services/login.service';
-import { Account } from '../../model';
+import { Account,AuthData } from '../../model';
+
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  account: Account= new Account;
+  account: Account = new Account;
   hide: boolean = true;
   constructor(public dialogRef: MatDialogRef<LoginComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    @Inject(MAT_DIALOG_DATA) public data: AuthData,
     private socialAuthService: AuthService,
-    private loginService:LoginService) { }
+    private loginService: LoginService) { }
 
   ngOnInit() {
-    
+
   }
 
   socialSignIn(socialPlatform: string) {
@@ -31,8 +32,12 @@ export class LoginComponent implements OnInit {
       socialPlatformProvider = FacebookLoginProvider.PROVIDER_ID;
       this.socialAuthService.signIn(socialPlatformProvider).then(
         (userData) => {
-          this.loginService.login_fb(userData.id, userData.token).subscribe(login =>{
-            console.log(login);
+          this.loginService.login_fb(userData.id, userData.token).subscribe(login => {
+            this.data.username = login.username;
+            this.data.orn = login.orn;
+            this.data.profilepic = login.profilepic;
+            this.data.auth = login.auth;
+            this.dialogRef.close();
           });
         }
       );
@@ -40,29 +45,21 @@ export class LoginComponent implements OnInit {
       socialPlatformProvider = GoogleLoginProvider.PROVIDER_ID;
       this.socialAuthService.signIn(socialPlatformProvider).then(
         (userData) => {
-          console.log(userData.idToken);
-          this.loginService.login_g(userData.email, userData.idToken).subscribe(login =>{
-            console.log(login);
+          this.loginService.login_g(userData.token, userData.idToken).subscribe(login => {
+            this.data.username = login.username;
+            this.data.orn = login.orn;
+            this.data.profilepic = login.profilepic;
+            this.data.auth = login.auth;
+            this.dialogRef.close();
           });
         }
       );
     }
-    
+
   }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
-  manual() {
-    this.loginService.login(this.account.username, this.account.password).subscribe(login =>{
-      console.log(login);
-    });
-  }
-
-}
-
-export interface DialogData {
-  animal: string;
-  name: string;
 }

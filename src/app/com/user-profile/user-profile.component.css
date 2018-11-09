@@ -1,0 +1,17 @@
+.profile-container{
+    margin: 30px 5px 30px 5px;
+}
+.profile-form{
+    text-align: center;
+}
+.profile-form > *{
+    width: 100%;
+}
+
+.profile-pic{
+    border-radius: 50%;
+    height: 135px;
+    width: 135px !important;
+    margin-bottom: 20px;
+}
+
