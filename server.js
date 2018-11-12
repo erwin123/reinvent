@@ -33,18 +33,11 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-// Parsers
-app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json({ limit: "50mb" }));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
-
-// Angular DIST output folder
-app.use(express.static(path.join(__dirname, 'dist')));
+//fileupload
+app.use(fileUpload());
 
 //secure the api with auth
 let auth = (req, res, next) => {
-
     let uri = String(req.originalUrl);
     if (uri.indexOf('/account/privatecookiecheck') >= 0 ||
         uri.indexOf('/account/login/fb') >= 0 ||
@@ -67,10 +60,20 @@ const user = require('./server/route/ruser');
 const account = require('./server/route/raccount');
 const cat = require('./server/route/rcategory');
 const art = require('./server/route/rarticle');
+
+// Parsers
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
+
+// Angular DIST output folder
+app.use(express.static(path.join(__dirname, 'dist')));
 app.use('/api/user', user);
 app.use('/api/account', account);
 app.use('/api/cat', cat);
 app.use('/api/article', art);
+
 //set timeout
 app.use(timeout('150s'));
 app.use(haltOnTimedout);

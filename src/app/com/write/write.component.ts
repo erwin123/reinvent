@@ -1,11 +1,12 @@
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {Component, ElementRef, ViewChild,OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
-import {MatAutocompleteSelectedEvent, MatChipInputEvent, MatAutocomplete, MatSnackBar} from '@angular/material';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatAutocompleteSelectedEvent, MatChipInputEvent, MatAutocomplete, MatSnackBar } from '@angular/material';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { Article, Category, MediaArticle } from 'src/app/model';
 import { CategoryService } from 'src/app/services/category.service';
+import { ArticleService } from 'src/app/services/article.service';
 
 @Component({
   selector: 'app-write',
@@ -14,9 +15,9 @@ import { CategoryService } from 'src/app/services/category.service';
 })
 export class WriteComponent implements OnInit {
 
-  article:Article = new Article();
+  article: Article = new Article();
   medias: Array<MediaArticle> = new Array<MediaArticle>();
-  loadedPhoto:boolean = false;
+  loadedPhoto: boolean = false;
   imgRwd: Array<File> = new Array();
 
   visible = true;
@@ -32,10 +33,10 @@ export class WriteComponent implements OnInit {
   @ViewChild('catInput') catInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
-  constructor(private catService:CategoryService, public snackBar: MatSnackBar) {
+  constructor(private catService: CategoryService, public snackBar: MatSnackBar, private artService: ArticleService) {
     this.filteredCats = this.catCtrl.valueChanges.pipe(
-        startWith(null),
-        map((cat: string | null) => cat ? this._filter(cat) : this.allCats.slice()));
+      startWith(null),
+      map((cat: string | null) => cat ? this._filter(cat) : this.allCats.slice()));
   }
 
   add(event: MatChipInputEvent): void {
@@ -87,8 +88,8 @@ export class WriteComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.catService.getAll().subscribe(cat=>{
-      cat.forEach(el=>{
+    this.catService.getAll().subscribe(cat => {
+      cat.forEach(el => {
         this.allCats.push(el.CategoryName);
       })
     })
@@ -97,13 +98,17 @@ export class WriteComponent implements OnInit {
   readUrlImg(event: any) {
     this.loadedPhoto = true;
     if (event.target.files && event.target.files[0]) {
-      for(let i=0 ; i < event.target.files.length ; i++)
-      {
-        var reader = new FileReader();
-        reader.readAsDataURL(event.target.files[i]);
-        reader.onload = (event: any) => {
-          let type = event.target.result.toString().split(';')[0].indexOf('mp4') >= 0? "video":"img" ;
-          this.medias.push({ MediaPath: event.target.result, MediaType:type,ArticleCode:"", Id:0 });
+      for (let i = 0; i < event.target.files.length; i++) {
+        let type = this.getFileType(event.target.files[i].type);
+        if (type === "img") {
+          var reader = new FileReader();
+          reader.readAsDataURL(event.target.files[i]);
+          reader.onload = (event: any) => {
+            this.medias.push({ MediaPath: event.target.result, MediaType: type, ArticleCode: "", Id: 0 });
+            this.loadedPhoto = false;
+          }
+        } else {
+          this.medias.push({ MediaPath: event.target.result, MediaType: type, ArticleCode: "", Id: 0 });
           this.loadedPhoto = false;
         }
         this.imgRwd.push(event.target.files[i]);
@@ -111,7 +116,11 @@ export class WriteComponent implements OnInit {
     }
   }
 
-  save(){
+  getFileType(name: string): string {
+    return name.indexOf('video') >= 0 ? "video" : "img";
+  }
+
+  save() {
     console.log(this.article);
     console.log(this.cats);
 
@@ -119,32 +128,22 @@ export class WriteComponent implements OnInit {
       this.openSnackBar("Minimal 1 foto atau video untuk posting. tulisan");
       return;
     }
-    var itemsProcessed = 0;
+    this.artService.postArticle(this.article).subscribe(added=>{
+      console.log(added);
+    })
+    let itemsProcessed:Array<MediaArticle> = new Array<MediaArticle>();
     // this.imgRwd.forEach((el, index, array) => {
-    //   this.ttwService.uploadTr(el).subscribe(res => {
-    //     let tr: Talkthewalk = new Talkthewalk();
-    //     let urlPath:any = res;
-    //     tr.URLpath = urlPath;
-    //     tr.BranchCode = this.empInfo.BranchCode;
-    //     tr.ProjectCode = this.empInfo.ProjectCode;
-    //     tr.Username = this.empInfo.Username;
-    //     tr.TRtype = 2;
-    //     setTimeout(() => {
-    //       this.ttwService.postTr(tr).subscribe(data => {
-    //         this.stateService.setTraffic(false);
-    //         itemsProcessed++;
-    //         if (itemsProcessed === array.length) {
-    //           this.toastr.success('', 'Dokumen berhasil tersimpan');
-    //         }
-    //       }, err => {
-    //         this.stateService.setTraffic(false);
-    //         this.toastr.error('', 'Terjadi kesalahan jaringan, Hanya beberapa foto terunggah');
-    //       })
-    //     }, 2000);
-        
+    //   this.artService.postArticleFileMedia(el).subscribe(res => {
+    //     let elType = this.getFileType(el.type);
+    //     let mediaArticle: MediaArticle = new MediaArticle();
+    //     let urlPath: any = res;
+    //     mediaArticle.MediaPath = urlPath;
+    //     mediaArticle.MediaType = elType;
+    //     itemsProcessed.push(mediaArticle);
     //   }, err => {
-    //     this.stateService.setTraffic(false);
-    //     this.toastr.error('', 'Terjadi kesalahan jaringan');
+    //     console.log("error");
+    //   },()=>{
+        
     //   });
     // });
   }

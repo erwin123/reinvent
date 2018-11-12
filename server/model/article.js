@@ -83,3 +83,27 @@ exports.getAllMediaArticle = function (Media, done) {
         })
     })
 }
+
+exports.insertArticleCategory = function (ArticleCategory, done) {
+    var values = [ArticleCategory.CategoryCode,ArticleCategory.ArticleCode];
+    db.get(db.trx, function (err, connection) {
+        if (err) return done('Database problem')
+        connection.query('CALL sp_ArticleCategoryGenerator(?,?)', values, function (err, result) {
+            connection.release();
+            if (err) return done(err)
+            done(null, result[0])
+        })
+    })
+}
+
+exports.deleteArticleCategory = function (catCode, artCode, done) {
+    var values = [catCode,artCode];
+    db.get(db.trx, function (err, connection) {
+        if (err) return done('Database problem')
+        connection.query('DELETE FROM ArticleCategory where CategoryCode = ? AND ArticleCode=?', values, function (err, result) {
+            connection.release();
+            if (err) return done(err)
+            done(null, result[0])
+        })
+    })
+}

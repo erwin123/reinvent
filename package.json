@@ -51,6 +51,7 @@
     "ngx-cookie-service": "^2.0.0",
     "path": "^0.12.7",
     "rxjs": "^6.3.3",
+    "uuid": "^3.3.2",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
