@@ -52,16 +52,19 @@ import { UserProfileComponent } from './com/user-profile/user-profile.component'
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CategoryComponent } from './com/category/category.component';
 import { SettingComponent } from './com/setting/setting.component';
+import { NguCarouselModule } from '@ngu/carousel';
 
 import {
   SocialLoginModule,
   AuthServiceConfig,
   GoogleLoginProvider,
   FacebookLoginProvider,
-  LinkedinLoginProvider,
-  VkontakteLoginProvider,
+  LinkedinLoginProvider
 } from "angular-6-social-login-v2";
 import { NotifbarComponent } from './com/notifbar/notifbar.component';
+import { CarouselComponent } from './com/carousel/carousel.component';
+import { CommentComponent } from './com/comment/comment.component';
+import { WriteComponent } from './com/write/write.component';
 
 
 export function getAuthServiceConfigs() {
@@ -97,7 +100,10 @@ export function getAuthServiceConfigs() {
     UserProfileComponent,
     CategoryComponent,
     SettingComponent,
-    NotifbarComponent
+    NotifbarComponent,
+    CarouselComponent,
+    CommentComponent,
+    WriteComponent
   ],
   imports: [
     BrowserModule,
@@ -142,7 +148,8 @@ export function getAuthServiceConfigs() {
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    NguCarouselModule
   ],
   providers: [AuthguardService, {
     provide: AuthServiceConfig,

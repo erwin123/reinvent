@@ -78,6 +78,7 @@ router.post('/login/fb', function (req, res, next) {
                         req.session.token = req.body.token;
                         req.session.id = req.body.id;
                         req.session.prv = "fb";
+                        req.session.email = obj.email;
                         account.lastLogin(obj.email, (err, updateLogin) => {
                             res.setHeader('Content-Type', 'application/json');
                             res.status(200).send({ profilepic:photo, auth: true, username: req.body.username, orn: 'fb' });
@@ -86,13 +87,15 @@ router.post('/login/fb', function (req, res, next) {
                         req.session.token = req.body.token;
                         req.session.id = req.body.id;
                         req.session.prv = "fb";
+                        req.session.email = obj.email;
                         account.register({ Username: obj.email, Password: "fromfb", AddedBy: "facebook" }, (err, accReg) => {
-                            res.setHeader('Content-Type', 'application/json');
-                            res.status(200).send({ profilepic:photo, auth: true, username: req.body.username, orn: 'fb' });
+                            
                         });
 
                         user.insertUser({ Username: obj.email, FirstName: obj.first_name, LastName: obj.last_name, Photo: photo }, (err, addUser) => {
-
+                            
+                            res.setHeader('Content-Type', 'application/json');
+                            res.status(200).send({ profilepic:photo, auth: true, username: req.body.username, orn: 'fb' });
                         })
                     }
                 })
@@ -132,6 +135,7 @@ router.post('/login/g', function (req, res, next) {
                         req.session.token = req.body.token;
                         req.session.id = req.body.id;
                         req.session.prv = "g";
+                        req.session.email = obj.email;
                         account.lastLogin(obj.email, (err, updateLogin) => {
                             res.setHeader('Content-Type', 'application/json');
                             res.status(200).send({ profilepic:obj.picture, auth: true, username: obj.email, orn: 'g' });
@@ -140,13 +144,14 @@ router.post('/login/g', function (req, res, next) {
                         req.session.token = req.body.token;
                         req.session.id = req.body.id;
                         req.session.prv = "g";
+                        req.session.email = obj.email;
                         account.register({ Username: obj.email, Password: "fromgoogle", AddedBy: "google" }, (err, accReg) => {
-                            res.setHeader('Content-Type', 'application/json');
-                            res.status(200).send({ profilepic:obj.picture, auth: true, username: obj.email, orn: 'g' });
+                            
                         });
 
                         user.insertUser({ Username: obj.email, FirstName: obj.given_name, LastName: obj.family_name, Photo: obj.picture }, (err, addUser) => {
-
+                            res.setHeader('Content-Type', 'application/json');
+                            res.status(200).send({ profilepic:obj.picture, auth: true, username: obj.email, orn: 'g' });
                         })
                     }
                 })

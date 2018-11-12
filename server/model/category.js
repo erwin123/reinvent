@@ -66,7 +66,7 @@ exports.deleteCategory = function (key, done) {
 exports.getAllUserCategory = function (done) {
     db.get(db.trx, function (err, connection) {
         if (err) return done('Database problem')
-        connection.query('SELECT Id,Username, CategoryCode from UserCategory', function (err, rows) {
+        connection.query('SELECT Id,UserCode, CategoryCode from UserCategory', function (err, rows) {
             connection.release();
             if (err) return done(err)
             done(null, rows)
@@ -78,7 +78,7 @@ exports.getAllUserCategoryByCriteria = function (UserCategory, done) {
     var wh = db.whereCriteriaGenerator(UserCategory);
     db.get(db.trx, function (err, connection) {
         if (err) return done('Database problem')
-        connection.query("SELECT Id,Username, CategoryCode from UserCategory"+wh, function (err, rows) {
+        connection.query("SELECT Id,UserCode, CategoryCode from UserCategory"+wh, function (err, rows) {
             connection.release();
             if (err) return done(err)
             done(null, rows)
@@ -87,7 +87,7 @@ exports.getAllUserCategoryByCriteria = function (UserCategory, done) {
 }
 
 exports.insertUserCategory= function (UserCategory, done) {
-    var values = [UserCategory.CategoryCode,UserCategory.Username];
+    var values = [UserCategory.CategoryCode,UserCategory.UserCode];
     db.get(db.trx, function (err, connection) {
         if (err) return done('Database problem')
         connection.query('CALL sp_UserCategoryGenerator(?,?)', values, function (err, result) {
@@ -102,7 +102,7 @@ exports.deleteUserCategory = function (key1,key2, done) {
     var values = [key1,key2];
     db.get(db.trx, function (err, connection) {
         if (err) return done('Database problem')
-        connection.query('DELETE FROM UserCategory where CategoryCode=? AND Username=?', values, function (err, result) {
+        connection.query('DELETE FROM UserCategory where CategoryCode=? AND UserCode=?', values, function (err, result) {
             connection.release();
             if (err) return done(err)
             done(null, result)

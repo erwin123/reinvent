@@ -22,6 +22,13 @@ export class ProfileService {
     return this.httpClient.post<User>(url, { Username:username }, { headers: headers, withCredentials:true }).pipe(map(res => { return res; }));
   }
 
+  getCode(userCode:string): Observable<User> {
+    //this.token = localStorage.getItem('currentUser');
+    const headers = this._headers.append('x-access-token', "init");
+    let url = globalVar.global_api + "/user/cr/";
+    return this.httpClient.post<User>(url, { UserCode:userCode }, { headers: headers, withCredentials:true }).pipe(map(res => { return res; }));
+  }
+
   put(user:User): Observable<User> {
     //this.token = localStorage.getItem('currentUser');
     const headers = this._headers.append('x-access-token', "init");

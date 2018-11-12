@@ -1,22 +1,24 @@
 <div class="setting-container">
-
   <mat-card class="setting-card">
-
     <h2>Minat Kategori</h2>
     <div class="each-setting">
       <div [fxLayout]="'row wrap'" fxLayoutAlign="center none">
-        <div fxFlex.xs="40%"
-             fxFlex.lg="30%"
-             fxFlex.md="30%"
-             fxFlex.sm="30%" *ngFor="let cat of cats;" class="category" [style.background]="cat.Color">
-            {{cat.CategoryName}}
+        <div (click)="following(cat.CategoryCode, cat.UserCode)"
+        fxFlex.xs="40%" fxFlex.lg="30%"
+        fxFlex.md="30%" fxFlex.sm="30%"
+        *ngFor="let cat of cats;" class="category"
+          [style.background-image]="'url('+assetUrl+cat.Thumbnail + ')'" >
+          <div class="overlay-white">
+            <div class="overlay-white-text">
+              <i *ngIf="cat.UserCode" class="material-icons">
+                check_circle
+              </i>
+              {{cat.CategoryName}}
+            </div>
           </div>
-        <!-- <div fxFlex.gt-xs="30%" [fxFlex.gt-md]="regularDistribution" *ngFor="let cat of cats;" class="category">
-          {{cat.CategoryName}}
-        </div> -->
+
+        </div>
       </div>
     </div>
-
-
   </mat-card>
 </div>

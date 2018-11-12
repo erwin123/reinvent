@@ -1,7 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-@import url( 'https://fonts.googleapis.com/css?family=Roboto:400,700|Material+Icons');
-@import url( 'https://fonts.googleapis.com/css?family=Pattaya');
+@import url( 'https://fonts.googleapis.com/css?family=Roboto:400,700|Material+Icons|Pattaya');
 
 body{
     font-family: 'Roboto',serif;
@@ -25,4 +24,50 @@ body{
 .blue-snackbar button{
     color:#2196F3;
     background: #fff
+}
+
+.material-icons{
+    display: inline-flex !important;
+    vertical-align: middle !important;
+}
+
+.upload-btn-wrapper {
+    display: block;
+    width: 100%;
+    cursor: pointer;
+}
+
+.btn-file {
+    display: block;
+    width: 100%;
+    border: none;
+    color: #fff;
+    background: #00acc1;
+    padding: 8px 20px;
+    font-size: 12px;
+    font-weight: bold;
+    
+    cursor: pointer !important;
+}
+
+.upload-btn-wrapper{
+    position: relative;
+    cursor: pointer !important;
+}
+
+.upload-btn-wrapper input[type=file] {
+    font-size: 20px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    
+    cursor: pointer !important;
+}
+
+.upload-btn-wrapper button {
+    margin-top: 10px;
+    font-size: 16px;
+    
+    cursor: pointer !important;
 }

@@ -64,7 +64,7 @@ router.post('/usr/', function (req, res, next) {
 });
 
 router.delete('/usr/:key1/:key2', function (req, res, next) {
-    cat.deleteUserCategory(req.params.key1, function (err, rows) {
+    cat.deleteUserCategory(req.params.key1,req.params.key2 , function (err, rows) {
         if (err) { res.json(err); }
         else { res.json(rows); }
     });

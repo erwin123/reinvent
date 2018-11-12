@@ -66,10 +66,11 @@ app.use(auth);
 const user = require('./server/route/ruser');
 const account = require('./server/route/raccount');
 const cat = require('./server/route/rcategory');
+const art = require('./server/route/rarticle');
 app.use('/api/user', user);
 app.use('/api/account', account);
 app.use('/api/cat', cat);
-
+app.use('/api/article', art);
 //set timeout
 app.use(timeout('150s'));
 app.use(haltOnTimedout);

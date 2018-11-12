@@ -3,6 +3,13 @@ const config = require('../config');
 var express = require('express');
 var router = express.Router();
 
+router.get('/whoami', function (req, res, next) {
+    user.getAllUserByCriteria({Username:req.session.email}, function (err, rows) {
+        if (err) { res.json(err); }
+        else { res.json(rows); }
+    });
+});
+
 router.get('/', function (req, res, next) {
     user.getAllUser(function (err, rows) {
         if (err) { res.json(err); }

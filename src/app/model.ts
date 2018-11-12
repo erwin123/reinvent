@@ -11,11 +11,19 @@ export class Article {
     CreatedBy: string;
     CreatedDate: string;
     ArticleCode: string;
-    MediaType: string;
-    MediaPath: string;
     Status: number;
     Shared: number;
     Viewed: number;
+    UserCode:string;
+    Medias:Array<MediaArticle> = new Array<MediaArticle>();
+    Writer:User = new User();
+}
+
+export class MediaArticle {
+    Id: number;
+    MediaType: string;
+    MediaPath: string;
+    ArticleCode: string;
 }
 
 export class Comment {
@@ -33,17 +41,18 @@ export class ArticleLikes {
     Username: string;
 }
 
-export class UserCategory {
-    Username: string;
-    CategoryCode: string;
-}
-
 export class Category {
     Id: number;
-    CategoryName: string;
+    CategoryName: string = "";
+    CategoryCode: string = "";
+    Thumbnail: string = "";
+    UserCode:string = "";
+}
+
+export class UserCategory {
+    Id: number;
     CategoryCode: string;
-    Thumbnail: string;
-    Color:string;
+    UserCode: string;
 }
 
 export class User {
@@ -58,6 +67,7 @@ export class User {
     City: string;
     Photo: string;
     About:string;
+    UserCode:string;
 }
 
 export class Account {
@@ -70,4 +80,5 @@ export class AuthData {
     profilepic: string = "";
     orn: string = "";
     username: string = "";
+    usercode:string = ""
 }

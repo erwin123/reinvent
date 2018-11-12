@@ -8,6 +8,7 @@ import { ArticleComponent } from './com/article/article.component';
 import { ArticleFeedComponent } from './com/article-feed/article-feed.component';
 import { UserProfileComponent } from './com/user-profile/user-profile.component';
 import { SettingComponent } from './com/setting/setting.component';
+import { WriteComponent } from './com/write/write.component';
 
 
 const appRoutes: Routes = [
@@ -20,7 +21,8 @@ const appRoutes: Routes = [
       { path: 'article-feed', component: ArticleFeedComponent, data: { state: 'article-feed' } },
       { path: 'login', component: LoginComponent, data: { state: 'login' } },
       { path: 'profile', component: UserProfileComponent,canActivate: [AuthguardService], data: { state: 'profile' } },
-      { path: 'setting', component: SettingComponent,canActivate: [AuthguardService], data: { state: 'setting' } }
+      { path: 'setting', component: SettingComponent,canActivate: [AuthguardService], data: { state: 'setting' } },
+      { path: 'write', component: WriteComponent,canActivate: [AuthguardService], data: { state: 'write' } }
     ]
   },
   //{ path: '', redirectTo: 'main/landing'},

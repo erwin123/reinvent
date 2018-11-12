@@ -1,6 +1,10 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CategoryService } from 'src/app/services/category.service';
-import { Category } from 'src/app/model';
+import { Category, AuthData } from 'src/app/model';
+import * as globalVar from '../../global';
+import { join, leftJoin } from 'array-join';
+import { forkJoin } from 'rxjs';
+import { StatemanagementService } from 'src/app/services/statemanagement.service';
 
 @Component({
   selector: 'app-setting',
@@ -10,36 +14,32 @@ import { Category } from 'src/app/model';
 export class SettingComponent implements OnInit, AfterViewInit {
   regularDistribution = 100 / 5 + '%';
   cats:Array<Category> = new Array<Category>();
-  
-  constructor(private catService:CategoryService) { }
+  assetUrl = globalVar.global_url + "assets/picture/content/";
+  authData: AuthData = new AuthData();
+  constructor(private catService:CategoryService, private stateService:StatemanagementService) { }
   ngOnInit() {
-    // this.catService.getAll().subscribe(res=>{
-    //   this.cats = res;
-    // });
-  }
-  ngAfterViewInit(){
-    this.catService.getAll().subscribe(res=>{
-      this.cats = res;
-      this.cats.forEach(el=>{
-        el.Color = "linear-gradient(135deg, "+this.getColor()+" 0%,#fff 99%)" ;
-      })
+    this.authData = this.stateService.getAuth();
+    let q = forkJoin(this.catService.getAll(), this.catService.getAllCatUser(this.authData.usercode));
+    q.subscribe(res=>{
+      this.cats = leftJoin(res[0],res[1],{ key:"CategoryCode"});
+      console.log(this.cats);
     });
   }
-  getColor() {
-    // var letters = '0123456789ABCDEF'.split('');
-    // var color = '#';
-    // for (var i = 0; i < 6; i++) {
-    //     color += letters[Math.round(Math.random() * 10)];
-    // }
-    // return color;
-    var letters = '012345'.split('');
-    var color = '#';        
-    color += letters[Math.round(Math.random() * 5)];
-    letters = '0123456789ABCDEF'.split('');
-    for (var i = 0; i < 5; i++) {
-        color += letters[Math.round(Math.random() * 15)];
-    }
-    return color;
-    //return "#"+((1<<24)*Math.random()|0).toString(16);
+  ngAfterViewInit(){
+    
   }
+
+  following(catCode:string){
+    if(this.cats.find(f => f.CategoryCode === catCode).UserCode){
+      this.catService.delCatUser(this.authData.usercode, catCode).subscribe(del=>{
+        this.cats.find(f => f.CategoryCode === catCode).UserCode = undefined;
+      });
+    }else{
+      this.catService.addCatUser(this.authData.usercode, catCode).subscribe(add=>{
+        this.cats.find(f => f.CategoryCode === catCode).UserCode =this.authData.usercode;
+      });
+    }
+
+  }
+  
 }

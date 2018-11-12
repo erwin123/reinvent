@@ -1,0 +1,39 @@
+.bannerStyle h1 {
+    background-color: #fff;
+    text-align: center;
+    margin:0px !important;
+}
+
+.bannerStyle h1 img{
+width: 100%;
+height:inherit;
+}
+
+.directors{
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.295);
+    border: none;
+    color:#fff;
+    display: none;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 1);
+    cursor: pointer;
+}
+
+.leftRs {
+    left: 0;
+}
+
+.rightRs {
+    right: 0;
+}
+
+video {
+    width: 100%    !important;
+    height: auto   !important;
+  }

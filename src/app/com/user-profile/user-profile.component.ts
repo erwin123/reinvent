@@ -62,7 +62,7 @@ export class UserProfileComponent implements OnInit {
 
   openSnackBar(message: string) {
     this.snackBar.open(message, "OK", {
-      duration: 10000,
+      duration: 5000,
       panelClass: ['blue-snackbar']
     });
   }

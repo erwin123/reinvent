@@ -1,0 +1,21 @@
+<ngu-carousel [inputs]="carouselBanner" (onMove)="onmoveFn($event)">
+  <ngu-item NguCarouselItem class="bannerStyle" *ngFor="let media of medias">
+    <h1>
+      <img *ngIf="media.MediaType==='img'" src="{{media.MediaPath}}" alt="" title="{{media.mediaDesc}}">
+      <video *ngIf="media.MediaType==='video'"  controls (click)="toggleVideo()" #videoPlayer>
+        <source src="{{media.MediaPath}}" type="video/mp4"/>
+        Browser not supported
+      </video>
+    </h1>
+  </ngu-item>
+  <button NguCarouselPrev class='directors leftRs' (click)="stopVideo()">
+    <i class="material-icons">
+      chevron_left
+    </i>
+  </button>
+  <button NguCarouselNext class='directors rightRs' (click)="stopVideo()">
+    <i class="material-icons">
+      chevron_right
+    </i>
+  </button>
+</ngu-carousel>

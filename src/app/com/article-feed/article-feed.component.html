@@ -1,11 +1,14 @@
 <div class="content">
   <mat-card class="article-card" *ngFor="let o of articles">
     <mat-card-header>
-      <div mat-card-avatar class="example-header-image"></div>
+      <div mat-card-avatar class="example-header-image">
+        <img class="photo-writer" *ngIf="o.Writer" [src]="o.Writer.Photo" alt="" />
+      </div>
       <mat-card-title>{{o.Title}}</mat-card-title>
-      <mat-card-subtitle>{{o.CreatedBy}}</mat-card-subtitle>
+      <mat-card-subtitle *ngIf="o.Writer">{{o.Writer.FirstName}} {{o.Writer.LastName}}</mat-card-subtitle>
     </mat-card-header>
-    <img mat-card-image src="{{o.MediaPath}}" alt="Photo of a Shiba Inu">
+    <app-carousel *ngIf="o.Medias" [medias]="o.Medias"></app-carousel>
+    <!-- <img mat-card-image src="{{o.MediaPath}}" alt="Photo of a Shiba Inu"> -->
     <mat-card-content>
       <p>
         {{o.Text}}

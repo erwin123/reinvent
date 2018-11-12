@@ -5,6 +5,7 @@ import { LoginComponent } from '../com/login/login.component';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { StatemanagementService } from '../services/statemanagement.service';
+import { LoginService } from '../services/login.service';
 
 
 @Component({
@@ -27,7 +28,9 @@ export class MainComponent implements OnDestroy, OnInit {
   private _mobileQueryListener: () => void;
 
   constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher,
-    public dialog: MatDialog, private router: Router, private stateService: StatemanagementService) {
+    public dialog: MatDialog, private router: Router,
+    private stateService: StatemanagementService,
+    private userService:LoginService) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
@@ -45,7 +48,17 @@ export class MainComponent implements OnDestroy, OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (this.authData.auth) {
+
         this.stateService.setCurrentStateLogin(this.authData);
+        setTimeout(() => {
+          this.userService.getUser(this.authData.username).subscribe(user =>{
+            let auth = this.stateService.getAuth();
+            auth.usercode = user[0].UserCode;
+            console.log(auth);
+            this.stateService.setCurrentStateLogin(auth);
+          });
+        }, 500);
+        
       }
     });
   }
@@ -70,10 +83,10 @@ export class MainComponent implements OnDestroy, OnInit {
 
 
 let menus: Menu[] = [
-  { Text: "Beranda", Path: "#", Icon: "home" },
-  { Text: "Artikel", Path: "#", Icon: "description" },
-  { Text: "Tanya Saya", Path: "#", Icon: "question_answer" },
-  { Text: "Belajar & Mengajar", Path: "#", Icon: "school" },
+  { Text: "Beranda", Path: "article-feed", Icon: "home" },
+  { Text: "Artikel", Path: "article-feed", Icon: "description" },
+  { Text: "Tanya Saya", Path: "write", Icon: "question_answer" },
+  { Text: "Belajar & Mengajar", Path: "write", Icon: "school" },
   { Text: "Tentang Kami", Path: "#", Icon: "perm_device_information" }
 ]
 

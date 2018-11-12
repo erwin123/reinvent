@@ -1,7 +1,4 @@
-.example-header-image {
-    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
-    background-size: cover;
-}
+
 
 .content {
     margin: 35px 5px 30px 5px;
@@ -13,4 +10,9 @@
 
 .like{
     color:#ff1e4f;
+}
+
+.photo-writer{
+    border-radius: 50%;
+    width: 50px;
 }

@@ -50,6 +50,7 @@ export class LoginComponent implements OnInit {
             this.data.orn = login.orn;
             this.data.profilepic = login.profilepic;
             this.data.auth = login.auth;
+            this.data.usercode = login.usercode;
             this.dialogRef.close();
           });
         }

@@ -3,6 +3,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as globalVar from '../global';
+import { User } from '../model';
 
 @Injectable({
   providedIn: 'root'
@@ -34,5 +35,11 @@ export class LoginService {
     const headers = this._headers.append('x-access-token', "init");
     let url = globalVar.global_api + "/account/login/fb/";
     return this.httpClient.post<any>(url, { id:id, token:token }, { headers: headers, withCredentials:true }).pipe(map(res => { return res; }));
+  }
+
+  getUser(username:string): Observable<User[]>{
+    const headers = this._headers.append('x-access-token', "init");
+    let url = globalVar.global_api + "/user/whoami/";
+    return this.httpClient.get<User[]>(url, { headers: headers, withCredentials:true }).pipe(map(res => { return res; }));
   }
 }

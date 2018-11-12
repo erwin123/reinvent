@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as globalVar from '../global';
-import { Category } from '../model';
+import { Category, UserCategory } from '../model';
 
 @Injectable({
   providedIn: 'root'
@@ -27,5 +27,24 @@ export class CategoryService {
     const headers = this._headers.append('x-access-token', "init");
     let url = globalVar.global_api + "/cat/";
     return this.httpClient.get<Category[]>(url, { headers: headers, withCredentials:true }).pipe(map(res => { return res; }));
+  }
+
+  getAllCatUser(userCode:string): Observable<UserCategory[]> {
+    //this.token = localStorage.getItem('currentUser');
+    const headers = this._headers.append('x-access-token', "init");
+    let url = globalVar.global_api + "/cat/usr/cr/";
+    return this.httpClient.post<UserCategory[]>(url, {UserCode:userCode},{ headers: headers, withCredentials:true }).pipe(map(res => { return res; }));
+  }
+
+  delCatUser(userCode:string, catCode:string){
+    const headers = this._headers.append('x-access-token', "init");
+    let url = globalVar.global_api + "/cat/usr/"+catCode+"/"+userCode;
+    return this.httpClient.delete<UserCategory[]>(url, { headers: headers, withCredentials:true }).pipe(map(res => { return res; }));
+  }
+
+  addCatUser(userCode:string, catCode:string){
+    const headers = this._headers.append('x-access-token', "init");
+    let url = globalVar.global_api + "/cat/usr/";
+    return this.httpClient.post<UserCategory[]>(url, {UserCode:userCode, CategoryCode:catCode}, { headers: headers, withCredentials:true }).pipe(map(res => { return res; }));
   }
 }
