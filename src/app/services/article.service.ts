@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as globalVar from '../global';
-import { Category, UserCategory, Article, MediaArticle } from '../model';
+import { Category, UserCategory, Article, MediaArticle, ArticleCategory } from '../model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +15,10 @@ export class ArticleService {
   constructor(private httpClient: HttpClient) {
   }
 
+
   getAllFeed(): Observable<Article[]> {
     const headers = this._headers.append('x-access-token', "init");
-    let url = globalVar.global_api + "/article/fave/cr/";
+    let url = globalVar.global_api + "/article/cr/";
     return this.httpClient.post<Article[]>(url, {}, { headers: headers, withCredentials: true }).pipe(map(res => { return res; }));
   }
 
@@ -46,14 +47,20 @@ export class ArticleService {
     return this.httpClient.post<Article[]>(url, article, { headers: headers, withCredentials: true }).pipe(map(res => { return res; }));
   }
 
-  //postArticleDataMedia(article:Article): Observable<string> {
-    // const headers = this._headers.append('x-access-token', "init");
-    // let url = globalVar.global_api + "/article/";
-    // return this.httpClient.post<Article[]>(url, article, { headers: headers, withCredentials: true }).pipe(map(res => { return res; }));
-  //}
+  postArticleCategory(articleCategory:ArticleCategory) {
+    const headers = this._headers.append('x-access-token', "init");
+    let url = globalVar.global_api + "/article/category";
+    return this.httpClient.post<ArticleCategory[]>(url, articleCategory, { headers: headers, withCredentials: true }).pipe(map(res => { return res; }));
+  }
+
+  postArticleDataMedia(articleMedia:MediaArticle) {
+    const headers = this._headers.append('x-access-token', "init");
+    let url = globalVar.global_api + "/article/media/data";
+    return this.httpClient.post<MediaArticle[]>(url, articleMedia, { headers: headers, withCredentials: true }).pipe(map(res => { return res; }));
+  }
 
   postArticleFileMedia(fileToUpload: File): Observable<string> {
-    let _headers = new HttpHeaders().set('x-access-token', 'init');
+    let _headers = new HttpHeaders().set('x-access-token', 'init'); //exclude content type json
     const formData: FormData = new FormData();
     let url = globalVar.global_api + "/article/media/upload";
 

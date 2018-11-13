@@ -1,12 +1,12 @@
 <ngu-carousel [inputs]="carouselBanner" (onMove)="onmoveFn($event)">
   <ngu-item NguCarouselItem class="bannerStyle" *ngFor="let media of medias">
     <h1>
-      <img *ngIf="media.MediaType==='img'" src="{{media.MediaPath}}" alt="" title="{{media.mediaDesc}}">
-      <!-- <video *ngIf="media.MediaType==='video'"  controls (click)="toggleVideo()" #videoPlayer>
-        <source src="{{media.MediaPath}}" type="video/mp4"/>
+      <img *ngIf="media.MediaType==='img'" src="{{media.MediaPath | filtermedia}}" alt="" title="{{media.mediaDesc}}">
+      <video *ngIf="media.MediaType==='video' && !media.ModeEdit"  controls (click)="toggleVideo()" #videoPlayer>
+        <source src="{{media.MediaPath | filtermedia}}" type="video/mp4"/>
         Browser not supported
-      </video> -->
-      <img *ngIf="media.MediaType==='video'" src="https://www.sketchappsources.com/resources/source-image/apple_videos.png" alt="" title="{{media.mediaDesc}}">
+      </video>
+      <img *ngIf="media.MediaType==='video' && media.ModeEdit" src="https://www.sketchappsources.com/resources/source-image/apple_videos.png" alt="" title="{{media.mediaDesc}}">
     </h1>
   </ngu-item>
   <button NguCarouselPrev class='directors leftRs' (click)="stopVideo()">

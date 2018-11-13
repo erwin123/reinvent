@@ -47,9 +47,12 @@ export class UserProfileComponent implements OnInit {
     let currentUser: any
     if (this.stateService.getAuth()) {
       currentUser = this.stateService.getAuth();
-      this.profileService.get(currentUser.username).subscribe(res => {
-        this.profile = res[0];
-      });
+      setTimeout(() => {
+        this.profileService.getCode(currentUser.usercode).subscribe(res => {
+          this.profile = res[0];
+        });
+      }, 300);
+      
     }
   }
   numberOnly(event): boolean {
@@ -70,7 +73,6 @@ export class UserProfileComponent implements OnInit {
   save() {
     let newDate = new Date(this.profile.BirthDate);
     this.profile.BirthDate = moment(newDate).format();
-    console.log(this.profile.BirthDate);
     this.profileService.put(this.profile).subscribe(res => {
       this.openSnackBar("Tersimpan");
     });

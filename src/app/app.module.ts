@@ -61,10 +61,10 @@ import {
   FacebookLoginProvider,
   LinkedinLoginProvider
 } from "angular-6-social-login-v2";
-import { NotifbarComponent } from './com/notifbar/notifbar.component';
 import { CarouselComponent } from './com/carousel/carousel.component';
 import { CommentComponent } from './com/comment/comment.component';
 import { WriteComponent } from './com/write/write.component';
+import { FiltermediaPipe } from './pipes/filtermedia.pipe';
 
 
 export function getAuthServiceConfigs() {
@@ -72,7 +72,8 @@ export function getAuthServiceConfigs() {
     [
       {
         id: FacebookLoginProvider.PROVIDER_ID,
-        provider: new FacebookLoginProvider("259049374758284")
+        provider: new FacebookLoginProvider("259049374758284") //dev
+        //provider: new FacebookLoginProvider("362039564339296") //prod
       },
       {
         id: GoogleLoginProvider.PROVIDER_ID,
@@ -100,10 +101,10 @@ export function getAuthServiceConfigs() {
     UserProfileComponent,
     CategoryComponent,
     SettingComponent,
-    NotifbarComponent,
     CarouselComponent,
     CommentComponent,
-    WriteComponent
+    WriteComponent,
+    FiltermediaPipe
   ],
   imports: [
     BrowserModule,

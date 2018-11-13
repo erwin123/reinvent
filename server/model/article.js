@@ -96,6 +96,18 @@ exports.insertArticleCategory = function (ArticleCategory, done) {
     })
 }
 
+exports.insertMediaArticle = function (MediaArticle, done) {
+    var values = [MediaArticle.MediaType,MediaArticle.MediaPath,MediaArticle.ArticleCode];
+    db.get(db.trx, function (err, connection) {
+        if (err) return done('Database problem')
+        connection.query('CALL sp_MediaArticleGenerator(?,?,?)', values, function (err, result) {
+            connection.release();
+            if (err) return done(err)
+            done(null, result[0])
+        })
+    })
+}
+
 exports.deleteArticleCategory = function (catCode, artCode, done) {
     var values = [catCode,artCode];
     db.get(db.trx, function (err, connection) {

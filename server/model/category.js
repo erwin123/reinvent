@@ -59,6 +59,19 @@ exports.deleteCategory = function (key, done) {
     })
 }
 
+//----------moderation
+exports.insertCategoryMod= function (categoryName,articleCode, done) {
+    var values = [categoryName,articleCode];
+    db.get(db.trx, function (err, connection) {
+        if (err) return done('Database problem')
+        connection.query('insert into CategoryModaration(CategoryName, ArticleCode)values(?,?)', values, function (err, result) {
+            connection.release();
+            if (err) return done(err)
+            done(null, result[0])
+        })
+    })
+}
+
 
 
 //user category-------------------------------------------------------------

@@ -24,7 +24,15 @@ export class MediaArticle {
     MediaType: string;
     MediaPath: string;
     ArticleCode: string;
+    ModeEdit:boolean=false;
 }
+
+export class ArticleCategory {
+    Id: number;
+    CategoryCode: string;
+    ArticleCode: string;
+}
+
 
 export class Comment {
     Id: number;

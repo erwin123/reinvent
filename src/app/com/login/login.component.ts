@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit {
       socialPlatformProvider = FacebookLoginProvider.PROVIDER_ID;
       this.socialAuthService.signIn(socialPlatformProvider).then(
         (userData) => {
+          
           this.loginService.login_fb(userData.id, userData.token).subscribe(login => {
             this.data.username = login.username;
             this.data.orn = login.orn;
@@ -45,6 +46,7 @@ export class LoginComponent implements OnInit {
       socialPlatformProvider = GoogleLoginProvider.PROVIDER_ID;
       this.socialAuthService.signIn(socialPlatformProvider).then(
         (userData) => {
+          
           this.loginService.login_g(userData.token, userData.idToken).subscribe(login => {
             this.data.username = login.username;
             this.data.orn = login.orn;

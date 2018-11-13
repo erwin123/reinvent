@@ -16,6 +16,7 @@ import { LoginService } from '../services/login.service';
 export class MainComponent implements OnDestroy, OnInit {
   mobileQuery: MediaQueryList;
   //fillerNav:Menu[] = Menus; 
+  serachValue:string;
   fillerNav = menus;
   authData: AuthData = new AuthData();
   fillerContent = Array.from({ length: 50 }, () =>
@@ -54,7 +55,6 @@ export class MainComponent implements OnDestroy, OnInit {
           this.userService.getUser(this.authData.username).subscribe(user =>{
             let auth = this.stateService.getAuth();
             auth.usercode = user[0].UserCode;
-            console.log(auth);
             this.stateService.setCurrentStateLogin(auth);
           });
         }, 500);

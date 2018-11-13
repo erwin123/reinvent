@@ -4,9 +4,10 @@ import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent, MatChipInputEvent, MatAutocomplete, MatSnackBar } from '@angular/material';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { Article, Category, MediaArticle } from 'src/app/model';
+import { Article, Category, MediaArticle, AuthData, ArticleCategory } from 'src/app/model';
 import { CategoryService } from 'src/app/services/category.service';
 import { ArticleService } from 'src/app/services/article.service';
+import { StatemanagementService } from 'src/app/services/statemanagement.service';
 
 @Component({
   selector: 'app-write',
@@ -19,6 +20,7 @@ export class WriteComponent implements OnInit {
   medias: Array<MediaArticle> = new Array<MediaArticle>();
   loadedPhoto: boolean = false;
   imgRwd: Array<File> = new Array();
+  authData: AuthData = new AuthData();
 
   visible = true;
   selectable = true;
@@ -29,11 +31,14 @@ export class WriteComponent implements OnInit {
   filteredCats: Observable<string[]>;
   cats: Array<string> = new Array<string>();
   allCats: Array<string> = new Array<string>();
+  masterCats:Array<Category> = new Array<Category>();
 
   @ViewChild('catInput') catInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
-  constructor(private catService: CategoryService, public snackBar: MatSnackBar, private artService: ArticleService) {
+  constructor(private catService: CategoryService,
+    public snackBar: MatSnackBar, private artService: ArticleService,
+    private stateService: StatemanagementService) {
     this.filteredCats = this.catCtrl.valueChanges.pipe(
       startWith(null),
       map((cat: string | null) => cat ? this._filter(cat) : this.allCats.slice()));
@@ -88,7 +93,9 @@ export class WriteComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.authData = this.stateService.getAuth();
     this.catService.getAll().subscribe(cat => {
+      this.masterCats = cat;
       cat.forEach(el => {
         this.allCats.push(el.CategoryName);
       })
@@ -104,11 +111,11 @@ export class WriteComponent implements OnInit {
           var reader = new FileReader();
           reader.readAsDataURL(event.target.files[i]);
           reader.onload = (event: any) => {
-            this.medias.push({ MediaPath: event.target.result, MediaType: type, ArticleCode: "", Id: 0 });
+            this.medias.push({ MediaPath: event.target.result, MediaType: type, ArticleCode: "", Id: 0, ModeEdit:false });
             this.loadedPhoto = false;
           }
         } else {
-          this.medias.push({ MediaPath: event.target.result, MediaType: type, ArticleCode: "", Id: 0 });
+          this.medias.push({ MediaPath: event.target.result, MediaType: type, ArticleCode: "", Id: 0, ModeEdit:true });
           this.loadedPhoto = false;
         }
         this.imgRwd.push(event.target.files[i]);
@@ -121,30 +128,60 @@ export class WriteComponent implements OnInit {
   }
 
   save() {
-    console.log(this.article);
-    console.log(this.cats);
 
     if (this.imgRwd.length == 0) {
       this.openSnackBar("Minimal 1 foto atau video untuk posting. tulisan");
       return;
     }
-    this.artService.postArticle(this.article).subscribe(added=>{
-      console.log(added);
-    })
-    let itemsProcessed:Array<MediaArticle> = new Array<MediaArticle>();
-    // this.imgRwd.forEach((el, index, array) => {
-    //   this.artService.postArticleFileMedia(el).subscribe(res => {
-    //     let elType = this.getFileType(el.type);
-    //     let mediaArticle: MediaArticle = new MediaArticle();
-    //     let urlPath: any = res;
-    //     mediaArticle.MediaPath = urlPath;
-    //     mediaArticle.MediaType = elType;
-    //     itemsProcessed.push(mediaArticle);
-    //   }, err => {
-    //     console.log("error");
-    //   },()=>{
+    if (this.article.Title.length <= 10) {
+      this.openSnackBar("Judul minimal 10 karakter");
+      return;
+    }
+    if (this.article.Text.length <= 100) {
+      this.openSnackBar("Tulisan minimal 100 karakter");
+      return;
+    }
+    if (this.cats.length == 0) {
+      this.openSnackBar("Isi kategori tulisan");
+      return;
+    }
+    this.article.CreatedBy = this.authData.usercode;
+    this.artService.postArticle(this.article).subscribe(added => {
+      let itemsProcessed: Array<MediaArticle> = new Array<MediaArticle>();
+      this.imgRwd.forEach((el, index, array) => {
+        this.artService.postArticleFileMedia(el).subscribe(res => {
+          let elType = this.getFileType(el.type);
+          let mediaArticle: MediaArticle = new MediaArticle();
+          let urlPath: any = res;
+          mediaArticle.MediaPath = urlPath;
+          mediaArticle.MediaType = elType;
+          mediaArticle.ArticleCode = added[0].ArticleCode;
+
+          this.artService.postArticleDataMedia(mediaArticle).subscribe(mediaData => {
+            console.log(mediaData);
+          });
+        }, err => {
+          console.log("error");
+        }, () => {
+          console.log("done data media");
+        });
+      });
+
+      this.cats.forEach(cat =>{
+        if(this.masterCats.find(f=>f.CategoryName === cat))
+        {
+          let artCat:ArticleCategory = new ArticleCategory();
+          artCat.ArticleCode = added[0].ArticleCode;
+          artCat.CategoryCode = this.masterCats.find(f=>f.CategoryName === cat).CategoryCode;
+          this.artService.postArticleCategory(artCat).subscribe();
+        }else{
+          this.openSnackBar("Kategori baru Anda memerlukan moderasi. Article belum memiliki kategori");
+          this.catService.addCatMod(cat, added[0].ArticleCode).subscribe();
+        }
         
-    //   });
-    // });
+      })
+      
+    })
+
   }
 }

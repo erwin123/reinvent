@@ -28,6 +28,13 @@ router.post('/', function (req, res, next) {
     });
 });
 
+router.post('/moderation/', function (req, res, next) {
+    cat.insertCategoryMod(req.body.CategoryName, req.body.ArticleCode, function (err, resultInsert) {
+        if (err) { res.json(err); }
+        else { res.json(resultInsert); }
+    });
+});
+
 router.delete('/:key', function (req, res, next) {
     cat.deleteCategory(req.params.key, function (err, rows) {
         if (err) { res.json(err); }

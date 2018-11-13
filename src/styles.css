@@ -18,9 +18,6 @@ body{
     margin: 10px;
 }
 
-.blue-snackbar {
-    background: #2196F3 !important;
-}
 .blue-snackbar button{
     color:#2196F3;
     background: #fff

@@ -28,7 +28,7 @@ const appRoutes: Routes = [
   //{ path: '', redirectTo: 'main/landing'},
 
   // otherwise redirect to home
-  { path: '**', redirectTo: 'main/landing' }
+  { path: '**', redirectTo: 'main/article-feed' }
 ];
 @NgModule({
   imports: [RouterModule.forRoot(appRoutes, { useHash: true })],

@@ -22,7 +22,6 @@ router.post('/cr/', function (req, res, next) {
 });
 
 router.post('/', function (req, res, next) {
-    console.log(req.body);
     art.insertArticle(req.body, function (err, resultInsert) {
         if (err) { res.json(err); }
         else { res.json(resultInsert); }
@@ -54,6 +53,13 @@ router.post('/media/', function (req, res, next) {
     }
 });
 
+router.post('/media/data', function (req, res, next) {
+    art.insertMediaArticle(req.body, function (err, resultInsert) {
+        if (err) { res.json(err); }
+        else { res.json(resultInsert); }
+    });
+});
+
 router.post('/media/upload', function (req, res) {
     if (!req.files)
         return res.status(400).send('No files were uploaded.');
@@ -78,6 +84,7 @@ router.post('/category', function (req, res, next) {
         else { res.json(resultInsert); }
     });
 });
+
 
 router.delete('/category/:key1/:key2', function (req, res, next) {
     art.deleteArticleCategory(req.params.key1,req.params.key2, function (err, resultInsert) {

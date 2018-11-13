@@ -18,7 +18,7 @@ export class ArticleFeedComponent implements OnInit {
   ngOnInit() {
     this.authData = this.stateService.getAuth();
     if (this.filtering === "") {
-      this.artService.getFaveFeed(this.authData.usercode).subscribe(res => {
+      this.artService.getAllFeed().subscribe(res => {
         this.articles = res;
         this.articles.forEach(el => {
           this.artService.getMedia(el.ArticleCode).subscribe(med => {
@@ -30,6 +30,18 @@ export class ArticleFeedComponent implements OnInit {
         });
       });
 
+  }else{
+    this.artService.getFaveFeed(this.authData.usercode).subscribe(res => {
+      this.articles = res;
+      this.articles.forEach(el => {
+        this.artService.getMedia(el.ArticleCode).subscribe(med => {
+          el.Medias = med;
+        })
+        this.userService.getCode(el.UserCode).subscribe(writer => {
+          el.Writer = writer[0];
+        })
+      });
+    });
   }
 }
 

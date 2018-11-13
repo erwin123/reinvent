@@ -42,6 +42,12 @@ export class CategoryService {
     return this.httpClient.delete<UserCategory[]>(url, { headers: headers, withCredentials:true }).pipe(map(res => { return res; }));
   }
 
+  addCatMod(catName:string, articleCode:string){
+    const headers = this._headers.append('x-access-token', "init");
+    let url = globalVar.global_api + "/cat/moderation/";
+    return this.httpClient.post<any>(url, {CategoryName:catName, ArticleCode:articleCode}, { headers: headers, withCredentials:true }).pipe(map(res => { return res; }));
+  }
+
   addCatUser(userCode:string, catCode:string){
     const headers = this._headers.append('x-access-token', "init");
     let url = globalVar.global_api + "/cat/usr/";
