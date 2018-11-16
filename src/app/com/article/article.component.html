@@ -1,3 +1,26 @@
-<p>
-  article works!
-</p>
+<div  id="content-read" class="content-read" *ngIf="o" style="height:500px;overflow: auto;">
+    <mat-card class="article-card-read"  id="content-read">
+        <mat-card-header>
+          <div mat-card-avatar class="example-header-image">
+            <img class="photo-writer" *ngIf="o.Writer" [src]="o.Writer.Photo" alt="" />
+          </div>
+          <mat-card-title>{{o.Title}}</mat-card-title>
+          <mat-card-subtitle *ngIf="o.Writer">{{o.Writer.FirstName}} {{o.Writer.LastName}} </mat-card-subtitle>
+        </mat-card-header>
+        <app-carousel *ngIf="o.Medias" [medias]="o.Medias"></app-carousel>
+        <mat-card-content>
+          <p class="article-text" [innerHtml]="o.TextSanitizer">
+          </p>
+          <span style="font-size:12px;">{{o.CreatedDate | date}}</span>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-icon-button (click)="clickLike()" [class.like]="likeIt">
+            <mat-icon aria-label="like it">favorite</mat-icon>
+          </button>
+          <button mat-icon-button>
+            <mat-icon aria-label="share it">share</mat-icon>
+          </button>
+        </mat-card-actions>
+        <app-comment [articleCode]="o.ArticleCode"></app-comment>
+      </mat-card>
+</div>

@@ -65,6 +65,10 @@ import { CarouselComponent } from './com/carousel/carousel.component';
 import { CommentComponent } from './com/comment/comment.component';
 import { WriteComponent } from './com/write/write.component';
 import { FiltermediaPipe } from './pipes/filtermedia.pipe';
+import { NgxEditorModule } from 'ngx-editor';
+import { SortdescPipe } from './pipes/sortdesc.pipe';
+import { SanitizePipe } from './pipes/sanitize.pipe';
+import { StriphtmlPipe } from './pipes/striphtml.pipe';
 
 
 export function getAuthServiceConfigs() {
@@ -104,7 +108,10 @@ export function getAuthServiceConfigs() {
     CarouselComponent,
     CommentComponent,
     WriteComponent,
-    FiltermediaPipe
+    FiltermediaPipe,
+    SortdescPipe,
+    SanitizePipe,
+    StriphtmlPipe
   ],
   imports: [
     BrowserModule,
@@ -150,7 +157,8 @@ export function getAuthServiceConfigs() {
     MatSortModule,
     MatPaginatorModule,
     FlexLayoutModule,
-    NguCarouselModule
+    NguCarouselModule,
+    NgxEditorModule
   ],
   providers: [AuthguardService, {
     provide: AuthServiceConfig,

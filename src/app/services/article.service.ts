@@ -15,6 +15,11 @@ export class ArticleService {
   constructor(private httpClient: HttpClient) {
   }
 
+  getFeed(articleCode:string): Observable<Article[]> {
+    const headers = this._headers.append('x-access-token', "init");
+    let url = globalVar.global_api + "/article/cr/";
+    return this.httpClient.post<Article[]>(url, {ArticleCode:articleCode}, { headers: headers, withCredentials: true }).pipe(map(res => { return res; }));
+  }
 
   getAllFeed(): Observable<Article[]> {
     const headers = this._headers.append('x-access-token', "init");

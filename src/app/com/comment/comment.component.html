@@ -1,3 +1,25 @@
-<p>
-  comment works!
-</p>
+<div class="comment-list">
+  <mat-form-field class="comment-input inputer-text">
+    <textarea [disabled]="lock" rows="1" matInput placeholder="Tulis komentar" [(ngModel)]="commentIn.Text"></textarea>
+  </mat-form-field>
+  <button (click)="send()" [disabled]="lock" mat-icon-button class="inputer-button" color="primary" title="Kirim">
+    <mat-icon aria-label="Kirim" style="font-size:16px !important;">send</mat-icon>
+  </button>
+  <div *ngIf="comments.length>0">
+    <div [fxLayout]="'row wrap'" fxLayoutAlign="left none" class="comment-each" *ngFor="let com of comments | sortdesc">
+      <button fxFlex="10%" mat-icon-button>
+        <img class="profile-pic-toolbar"
+        src="https://akns-images.eonline.com/eol_images/Entire_Site/2018106/rs_634x846-181106061437-634.zayn-malik-british-vogue.11618.jpg?fit=inside|900:auto&output-quality=90"
+          alt="" />
+      </button>
+      <div fxFlex="90%" class="comment-writer">
+        <div class="comment-creator">{{com.Writer.FirstName}} {{com.Writer.LastName}} <span style="font-size:12px !important;font-weight: normal !important;font-style: italic;color:rgb(83, 83, 83);">{{com.CreatedDate
+            | date}}</span></div>
+        <div class="comment-text">{{com.Text}}</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="comments.length==0">
+  Belum ada komentar
+</div>

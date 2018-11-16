@@ -1,9 +1,12 @@
 <div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
-  <mat-toolbar color="primary" class="example-toolbar" style="color:#202020;background: #fff;border-bottom:1px #ccc solid;">
-    <button mat-icon-button (click)="snav.toggle()">
+  <mat-toolbar color="primary" class="example-toolbar"
+  style="color:#202020;background: #fff;border-bottom:1px #ccc solid;">
+    <button mat-icon-button (click)="snav.toggle()" style="width:35px;height:35px;">
       <mat-icon>menu</mat-icon>
+      
     </button>
-    <h1 class="example-app-name"><span class="re-title">ReVamp</span></h1>
+    <img [src]="baseAsssetUrl+'revamp_logo.png'" style="width:26px;height:26px;margin-left:10px;" alt='' />&nbsp;
+    <h1 *ngIf="!mobileQuery.matches" class="example-app-name"><span class="re-title1">re</span><span class="re-title2">vamp</span><span style="margin-left: 5px;font-size: 14px;">#pensiunitukesempatan</span></h1>
     <span class="spacer"></span>
     <span class="main-search">
       <input class="main-search-input" placeholder="Cari">
@@ -38,11 +41,11 @@
     </span>
   </mat-toolbar>
 
-  <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+  <mat-sidenav-container class="example-sidenav-container"  [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
     <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
       fixedTopGap="56">
       <mat-nav-list>
-        <a mat-list-item [routerLink]="nav.Path" *ngFor="let nav of fillerNav">
+        <a mat-list-item (click)="goTo('/main/'+nav.Path, nav.Params);mobileQuery.matches ? snav.toggle():null;" *ngFor="let nav of fillerNav">
           <mat-icon>{{nav.Icon}}</mat-icon>&nbsp;&nbsp;{{nav.Text}}
         </a>
       </mat-nav-list>
@@ -51,7 +54,7 @@
       <div [fxLayout]="'row wrap'" fxLayoutAlign="center none">
         <div fxFlex="25" fxHide.xs fxFlex.sm="10"></div>
         <div fxFlex="50" fxFlex.xs="98" fxFlex.sm="80">
-          <router-outlet></router-outlet>
+          <router-outlet (activate)="onActivate($event)"></router-outlet>
         </div>
         <div fxFlex="25" fxHide.xs fxFlex.sm="10"></div>
       </div>

@@ -7,7 +7,8 @@ import * as globalVar from '../global';
 export class FiltermediaPipe implements PipeTransform {
 
   transform(value: string, args?: any): any {
-    if(value.indexOf("http") >=0)
+    
+    if(value.indexOf("http") >=0 || value.indexOf("data:") >=0)
     {
       return value;
     }else{

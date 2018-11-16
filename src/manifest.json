@@ -1,8 +1,8 @@
 {
-  "name": "reinvent",
-  "short_name": "reinvent",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "name": "revamp",
+  "short_name": "revamp",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",

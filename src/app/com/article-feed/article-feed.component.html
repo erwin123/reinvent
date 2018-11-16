@@ -1,18 +1,24 @@
 <div class="content">
-  <mat-card class="article-card" *ngFor="let o of articles">
+  <div *ngIf="articles.length==0 && !isLoading" style="height:100px;text-align: center;vertical-align:middle;color:#ccc;">Artikel tidak ditemukan</div>
+  <div *ngIf="articles.length==0  && isLoading" style="height:100px;text-align: center;vertical-align:middle;color:#202020;">
+      <img [src]="baseAsssetUrl+'loader.gif'" style="width:56px;height:56px;" alt='' /><br/>
+      Memuat...
+  </div>
+  <mat-card class="article-card" *ngFor="let o of articles | sortdesc" >
     <mat-card-header>
       <div mat-card-avatar class="example-header-image">
         <img class="photo-writer" *ngIf="o.Writer" [src]="o.Writer.Photo" alt="" />
       </div>
-      <mat-card-title>{{o.Title}}</mat-card-title>
-      <mat-card-subtitle *ngIf="o.Writer">{{o.Writer.FirstName}} {{o.Writer.LastName}}</mat-card-subtitle>
+      <mat-card-title (click)="readIt(o.ArticleCode)">{{o.Title}}</mat-card-title>
+      <mat-card-subtitle *ngIf="o.Writer">{{o.Writer.FirstName}} {{o.Writer.LastName}} </mat-card-subtitle>
     </mat-card-header>
-    <app-carousel *ngIf="o.Medias" [medias]="o.Medias"></app-carousel>
+    <app-carousel (click)="readIt(o.ArticleCode)" *ngIf="o.Medias" [medias]="o.Medias"></app-carousel>
     <!-- <img mat-card-image src="{{o.MediaPath}}" alt="Photo of a Shiba Inu"> -->
     <mat-card-content>
-      <p>
-        {{o.Text}}
+      <p class="article-text" (click)="readIt(o.ArticleCode)">
+        {{o.Text | striphtml}}
       </p>
+      <span style="font-size:12px;">{{o.CreatedDate | date}}</span>
     </mat-card-content>
     <mat-card-actions>
       <button mat-icon-button (click)="clickLike()" [class.like]="likeIt">

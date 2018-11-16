@@ -1,7 +1,10 @@
+import { SafeResourceUrl, SafeHtml } from "@angular/platform-browser";
+
 export class Menu {
     Text: string;
     Path: string;
     Icon: string;
+    Params:string="";
 }
 
 export class Article {
@@ -17,6 +20,7 @@ export class Article {
     UserCode:string;
     Medias:Array<MediaArticle> = new Array<MediaArticle>();
     Writer:User = new User();
+    TextSanitizer:SafeHtml;
 }
 
 export class MediaArticle {
@@ -41,6 +45,7 @@ export class Comment {
     CreatedDate: string;
     Text: string;
     Status: number;
+    Writer: User = new User();
 }
 
 export class ArticleLikes {

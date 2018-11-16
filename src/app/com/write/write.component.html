@@ -28,15 +28,14 @@
             <i class="material-icons">
               perm_media
             </i>
-            Pilih Media
+            Pilih Media Headline
           </button>
           <input type="file" accept="image/*,video/*" #fileInput name="article" (change)="readUrlImg($event)" multiple />
         </div>
-        
-        <br/>
-        <mat-form-field>
-          <textarea matInput placeholder="Tulisan" [(ngModel)]="article.Text"></textarea>
-        </mat-form-field>
+
+        <br />
+        <app-ngx-editor style="text-align: left;" [config]="wyswyg" [placeholder]="'Tulisan'" [(ngModel)]="article.Text"></app-ngx-editor>
+
       </div>
     </mat-card-content>
     <mat-card-actions align="end">
@@ -44,5 +43,10 @@
         <i class="material-icons" style="font-size:20px;">save</i> POSTING
       </button>
     </mat-card-actions>
+    <div class="block" *ngIf="block">
+      <img [src]="baseAsssetUrl+'loader.gif'" style="width:56px;height:56px;" alt='' /><br/>
+      Memuat tulisan...
+    </div>
   </mat-card>
+
 </div>

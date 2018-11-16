@@ -8,6 +8,7 @@ import { Article, Category, MediaArticle, AuthData, ArticleCategory } from 'src/
 import { CategoryService } from 'src/app/services/category.service';
 import { ArticleService } from 'src/app/services/article.service';
 import { StatemanagementService } from 'src/app/services/statemanagement.service';
+import * as globalVar from '../../global';
 
 @Component({
   selector: 'app-write',
@@ -21,6 +22,8 @@ export class WriteComponent implements OnInit {
   loadedPhoto: boolean = false;
   imgRwd: Array<File> = new Array();
   authData: AuthData = new AuthData();
+  baseAsssetUrl: string = globalVar.global_url + "assets/picture/content/";
+  block: boolean = false;
 
   visible = true;
   selectable = true;
@@ -31,10 +34,12 @@ export class WriteComponent implements OnInit {
   filteredCats: Observable<string[]>;
   cats: Array<string> = new Array<string>();
   allCats: Array<string> = new Array<string>();
-  masterCats:Array<Category> = new Array<Category>();
+  masterCats: Array<Category> = new Array<Category>();
 
   @ViewChild('catInput') catInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
+
+  wyswyg: any = wyswyg;
 
   constructor(private catService: CategoryService,
     public snackBar: MatSnackBar, private artService: ArticleService,
@@ -42,6 +47,18 @@ export class WriteComponent implements OnInit {
     this.filteredCats = this.catCtrl.valueChanges.pipe(
       startWith(null),
       map((cat: string | null) => cat ? this._filter(cat) : this.allCats.slice()));
+  }
+
+  resetForm() {
+    this.catCtrl = new FormControl();
+    this.filteredCats = new Observable<string[]>();
+    this.cats = new Array<string>();
+    this.allCats = new Array<string>();
+    this.masterCats = new Array<Category>();
+    this.article = new Article();
+    this.medias = new Array<MediaArticle>();
+    this.loadedPhoto = false;
+    this.imgRwd = new Array<File>();
   }
 
   add(event: MatChipInputEvent): void {
@@ -110,12 +127,14 @@ export class WriteComponent implements OnInit {
         if (type === "img") {
           var reader = new FileReader();
           reader.readAsDataURL(event.target.files[i]);
+         
           reader.onload = (event: any) => {
-            this.medias.push({ MediaPath: event.target.result, MediaType: type, ArticleCode: "", Id: 0, ModeEdit:false });
+            this.medias.push({ MediaPath: event.target.result, MediaType: type, ArticleCode: "", Id: 0, ModeEdit: false });
             this.loadedPhoto = false;
           }
+
         } else {
-          this.medias.push({ MediaPath: event.target.result, MediaType: type, ArticleCode: "", Id: 0, ModeEdit:true });
+          this.medias.push({ MediaPath: event.target.result, MediaType: type, ArticleCode: "", Id: 0, ModeEdit: true });
           this.loadedPhoto = false;
         }
         this.imgRwd.push(event.target.files[i]);
@@ -128,7 +147,6 @@ export class WriteComponent implements OnInit {
   }
 
   save() {
-
     if (this.imgRwd.length == 0) {
       this.openSnackBar("Minimal 1 foto atau video untuk posting. tulisan");
       return;
@@ -146,8 +164,9 @@ export class WriteComponent implements OnInit {
       return;
     }
     this.article.CreatedBy = this.authData.usercode;
+    this.block = true;
     this.artService.postArticle(this.article).subscribe(added => {
-      let itemsProcessed: Array<MediaArticle> = new Array<MediaArticle>();
+      let itemsProcessed: number = this.imgRwd.length - 1;
       this.imgRwd.forEach((el, index, array) => {
         this.artService.postArticleFileMedia(el).subscribe(res => {
           let elType = this.getFileType(el.type);
@@ -163,25 +182,51 @@ export class WriteComponent implements OnInit {
         }, err => {
           console.log("error");
         }, () => {
+          if (itemsProcessed === index) {
+            setTimeout(() => {
+              this.block = false;
+              this.resetForm();
+            }, 6000);
+          }
           console.log("done data media");
         });
       });
 
-      this.cats.forEach(cat =>{
-        if(this.masterCats.find(f=>f.CategoryName === cat))
-        {
-          let artCat:ArticleCategory = new ArticleCategory();
+      this.cats.forEach(cat => {
+        if (this.masterCats.find(f => f.CategoryName === cat)) {
+          let artCat: ArticleCategory = new ArticleCategory();
           artCat.ArticleCode = added[0].ArticleCode;
-          artCat.CategoryCode = this.masterCats.find(f=>f.CategoryName === cat).CategoryCode;
+          artCat.CategoryCode = this.masterCats.find(f => f.CategoryName === cat).CategoryCode;
           this.artService.postArticleCategory(artCat).subscribe();
-        }else{
+        } else {
           this.openSnackBar("Kategori baru Anda memerlukan moderasi. Article belum memiliki kategori");
           this.catService.addCatMod(cat, added[0].ArticleCode).subscribe();
         }
-        
+
       })
-      
+
     })
 
   }
+}
+
+
+let wyswyg: any = {
+  "editable": true,
+  "spellcheck": false,
+  "height": "80px",
+  "minHeight": "0",
+  "width": "auto",
+  "minWidth": "0",
+  "translate": "yes",
+  "enableToolbar": true,
+  "showToolbar": true,
+  "placeholder": "Enter text here...",
+  "imageEndPoint": "",
+  "toolbar": [
+    ["bold", "italic", "underline", "strikeThrough"],
+    ["justifyLeft", "justifyCenter", "justifyRight", "justifyFull", "indent", "outdent"],
+    ["paragraph", "blockquote", "removeBlockquote", "horizontalLine", "orderedList", "unorderedList"],
+    ["link", "unlink", "image", "video"]
+  ]
 }

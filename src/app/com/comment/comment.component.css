@@ -1,0 +1,33 @@
+.comment-list {
+    font-size: 13px !important;
+    width: 100%;
+}
+
+.comment-creator {
+    margin-bottom: 2px;
+    font-weight: bold;
+}
+
+.inputer-text {
+    width: 80%;
+}
+
+.inputer-button {
+    width: 50px;
+    height: 40px;
+}
+
+.comment-each {
+    background: rgb(237, 255, 157);
+    border-radius: 5px;
+    margin-top: 5px;
+    width: calc(100% - 20px);
+    padding: 10px;
+}
+
+
+.profile-pic-toolbar {
+    border-radius: 50%;
+    height: 35px;
+    width: 35px;
+  }

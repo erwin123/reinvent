@@ -1,12 +1,13 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Menu, AuthData } from '../../app/model';
 import { LoginComponent } from '../com/login/login.component';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { StatemanagementService } from '../services/statemanagement.service';
 import { LoginService } from '../services/login.service';
-
+import * as globalVar from '../global';
+import { SelectControlValueAccessor } from '@angular/forms';
 
 @Component({
   selector: 'app-main',
@@ -15,8 +16,10 @@ import { LoginService } from '../services/login.service';
 })
 export class MainComponent implements OnDestroy, OnInit {
   mobileQuery: MediaQueryList;
+  @ViewChild('snav') snav;
   //fillerNav:Menu[] = Menus; 
-  serachValue:string;
+  baseAsssetUrl: string = globalVar.global_url + "assets/picture/content/";
+  serachValue: string;
   fillerNav = menus;
   authData: AuthData = new AuthData();
   fillerContent = Array.from({ length: 50 }, () =>
@@ -31,12 +34,27 @@ export class MainComponent implements OnDestroy, OnInit {
   constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher,
     public dialog: MatDialog, private router: Router,
     private stateService: StatemanagementService,
-    private userService:LoginService) {
+    private userService: LoginService) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
+
+  onActivate(event) {
+    console.log("a");
+    let scrollToTop = window.setInterval(() => {
+      let pos = window.pageYOffset;
+      if (pos > 0) {
+        window.scrollTo(0, pos - 20); // how far to scroll on each step
+      } else {
+        window.clearInterval(scrollToTop);
+      }
+    }, 16);
+  }
   ngOnInit() {
+    if (!this.mobileQuery.matches) {
+      this.snav.toggle('show');
+    }
     if (this.stateService.getAuth())
       this.authData = this.stateService.getAuth();
   }
@@ -52,13 +70,13 @@ export class MainComponent implements OnDestroy, OnInit {
 
         this.stateService.setCurrentStateLogin(this.authData);
         setTimeout(() => {
-          this.userService.getUser(this.authData.username).subscribe(user =>{
+          this.userService.getUser(this.authData.username).subscribe(user => {
             let auth = this.stateService.getAuth();
             auth.usercode = user[0].UserCode;
             this.stateService.setCurrentStateLogin(auth);
           });
         }, 500);
-        
+
       }
     });
   }
@@ -74,19 +92,22 @@ export class MainComponent implements OnDestroy, OnInit {
     }, 500);
   }
 
-  goTo(path: string) {
-    console.log(path);
-    this.router.navigate([path]);
+  goTo(path: string, params?: string) {
+    if (params) {
+      this.router.navigate([path], { queryParams: { fave: params } });
+    }
+    else
+      this.router.navigate([path]);
   }
 
 }
 
 
 let menus: Menu[] = [
-  { Text: "Beranda", Path: "article-feed", Icon: "home" },
-  { Text: "Artikel", Path: "article-feed", Icon: "description" },
-  { Text: "Tanya Saya", Path: "write", Icon: "question_answer" },
-  { Text: "Belajar & Mengajar", Path: "write", Icon: "school" },
-  { Text: "Tentang Kami", Path: "#", Icon: "perm_device_information" }
+  { Text: "Beranda", Path: "article-feed", Icon: "home", Params: "" },
+  { Text: "Artikel Favorite", Path: "article-feed", Icon: "book", Params: "1" },
+  { Text: "Tanya Saya", Path: "write", Icon: "question_answer", Params: "" },
+  { Text: "Belajar & Mengajar", Path: "write", Icon: "school", Params: "" },
+  { Text: "Tentang Kami", Path: "#", Icon: "perm_device_information", Params: "" }
 ]
 
