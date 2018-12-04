@@ -1,16 +1,16 @@
-<div class="content" trackScroll 
-(trackScrollEnter)="enter()" 
-(trackScrollLeave)="leave()">
-  <div *ngIf="articles.length==0 && !isLoading" style="height:100px;text-align: center;vertical-align:middle;color:#ccc;">Artikel
-    tidak ditemukan</div>
-  <app-loading *ngIf="articles.length==0  && isLoading"></app-loading>
-  <mat-card class="article-card" *ngFor="let o of articles | sortdesc">
+
+<div class="content-read">
+  <app-loading *ngIf="!o.Id"></app-loading>
+  <div style="padding-bottom:5px;">
+    <button (click)="goToPrevious()" mat-button style="background: #fff;color:darkslategray;">
+      <mat-icon aria-label="Kembali">arrow_back</mat-icon> Kembali
+    </button>
+    </div>
+  <mat-card class="article-card-read" *ngIf="o.Id">
     <app-article-header *ngIf="o.Writer" [user]="o.Writer" [articlecode]="o.ArticleCode" [articletitle]="o.Title"></app-article-header>
-    <app-carousel (click)="readItUrl(o.ArticleCode)" *ngIf="o.Medias" [medias]="o.Medias"></app-carousel>
-    <!-- <img mat-card-image src="{{o.MediaPath}}" alt="Photo of a Shiba Inu"> -->
+    <app-carousel *ngIf="o.Medias" [medias]="o.Medias"></app-carousel>
     <mat-card-content>
-      <p class="article-text" (click)="readItUrl(o.ArticleCode)">
-        {{o.Text | striphtml}}
+      <p class="article-text" [innerHtml]="o.TextSanitizer">
       </p>
       <span style="font-size:12px;">{{o.CreatedDate | date}}</span>
     </mat-card-content>
@@ -18,8 +18,8 @@
       <button title="like toggle" mat-icon-button (click)="clickLike(o.ArticleCode)" [class.like]="o.LikeIt">
         <mat-icon aria-label="like it">favorite</mat-icon>
       </button>
-      <span style="font-size: 10px;font-weight: bold;" *ngIf="o.Likes && authData">
-        {{o.Likes ?
+      <span style="font-size: 10px;font-weight: bold;" *ngIf="o.Likes && authData.usercode">
+        {{o.Likes.length > 0 ?
         o.Likes.length > 1 ?
         o.Likes[0].UserCode === authData.usercode ?
         'Anda dan '+ (o.Likes.length-1)+' orang lainnya suka' : o.Likes[0].FirstName+' '+o.Likes[0].LastName+' dan '+
@@ -28,6 +28,10 @@
         'Anda suka' : o.Likes[0].FirstName+' '+o.Likes[0].LastName+' suka'
         :''}}
       </span>
+      <button mat-icon-button>
+        <mat-icon aria-label="share it">share</mat-icon>
+      </button>
     </mat-card-actions>
+    <app-comment [articleCode]="o.ArticleCode"></app-comment>
   </mat-card>
 </div>

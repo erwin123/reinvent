@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent, MatChipInputEvent, MatAutocomplete, MatSnackBar } from '@angular/material';
 import { Observable } from 'rxjs';
@@ -16,7 +16,8 @@ import * as globalVar from '../../global';
   styleUrls: ['./write.component.css']
 })
 export class WriteComponent implements OnInit {
-
+  @Output('login') login = new EventEmitter<string>();
+  
   article: Article = new Article();
   medias: Array<MediaArticle> = new Array<MediaArticle>();
   loadedPhoto: boolean = false;
@@ -59,6 +60,10 @@ export class WriteComponent implements OnInit {
     this.medias = new Array<MediaArticle>();
     this.loadedPhoto = false;
     this.imgRwd = new Array<File>();
+  }
+
+  doLogin() {
+    this.login.emit('login');
   }
 
   add(event: MatChipInputEvent): void {
@@ -111,6 +116,11 @@ export class WriteComponent implements OnInit {
 
   ngOnInit() {
     this.authData = this.stateService.getAuth();
+    if(!this.authData)
+    {
+      this.doLogin();
+      return;
+    }
     this.catService.getAll().subscribe(cat => {
       this.masterCats = cat;
       cat.forEach(el => {

@@ -51,3 +51,12 @@ exports.whereCriteriaGenerator = function (object) {
   where = where.substring(0, where.length - 4);
   return where;
 }
+
+exports.takeLimit = function (number,lastId=null) {
+  var limit = " order by Id desc limit "+ number;
+  var lastId = " and Id > "+lastId;
+  if(lastId){
+    return lastId+limit;
+  }
+ return limit;
+}

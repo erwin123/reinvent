@@ -41,7 +41,13 @@ export class MainComponent implements OnDestroy, OnInit {
   }
 
   onActivate(event) {
-    console.log("a");
+
+    if (event.login) {
+      event.login.subscribe(log => {
+        if (log === "login")
+          this.openLoginDialog();
+      })
+    }
     let scrollToTop = window.setInterval(() => {
       let pos = window.pageYOffset;
       if (pos > 0) {
@@ -51,12 +57,17 @@ export class MainComponent implements OnDestroy, OnInit {
       }
     }, 16);
   }
+
+
   ngOnInit() {
     if (!this.mobileQuery.matches) {
       this.snav.toggle('show');
     }
     if (this.stateService.getAuth())
       this.authData = this.stateService.getAuth();
+    if (this.authData.auth) {
+      this.fillerNav.push({ Text: "Artikel Favorit", Path: "article-feed", Icon: "book", Params: "1" });
+    }
   }
 
   openLoginDialog(): void {
@@ -74,6 +85,9 @@ export class MainComponent implements OnDestroy, OnInit {
             let auth = this.stateService.getAuth();
             auth.usercode = user[0].UserCode;
             this.stateService.setCurrentStateLogin(auth);
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
           });
         }, 500);
 
@@ -105,8 +119,6 @@ export class MainComponent implements OnDestroy, OnInit {
 
 let menus: Menu[] = [
   { Text: "Beranda", Path: "article-feed", Icon: "home", Params: "" },
-  { Text: "Artikel Favorite", Path: "article-feed", Icon: "book", Params: "1" },
-  { Text: "Tanya Saya", Path: "write", Icon: "question_answer", Params: "" },
   { Text: "Belajar & Mengajar", Path: "write", Icon: "school", Params: "" },
   { Text: "Tentang Kami", Path: "#", Icon: "perm_device_information", Params: "" }
 ]

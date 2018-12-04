@@ -11,12 +11,6 @@
 .like{
     color:#ff1e4f;
 }
-
-.photo-writer{
-    border-radius: 50%;
-    width: 50px;
-}
-
-.mat-card-title, .article-text{
+.article-text{
     cursor: pointer;
 }

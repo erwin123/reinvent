@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile.service';
-import { User } from 'src/app/model';
+import { User, Follow, AuthData } from 'src/app/model';
 import { MatSnackBar } from '@angular/material';
 import { FormControl } from '@angular/forms';
 
@@ -9,6 +9,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import * as _moment from 'moment';
 import * as _rollupMoment from 'moment';
 import { StatemanagementService } from 'src/app/services/statemanagement.service';
+import { ActivatedRoute } from '@angular/router';
 
 const moment = _rollupMoment || _moment;
 
@@ -30,30 +31,53 @@ export const MY_FORMATS = {
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css'],
   providers: [
-    // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
-    // application's root module. We provide it at the component level here, due to limitations of
-    // our example generation script.
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ]
 })
 export class UserProfileComponent implements OnInit {
 
-  constructor(private profileService: ProfileService, public snackBar: MatSnackBar, private stateService: StatemanagementService) { }
+  constructor(private profileService: ProfileService, private route: ActivatedRoute, public snackBar: MatSnackBar, private stateService: StatemanagementService) { }
   profile: User = new User();
   date = new FormControl(moment());
+  viewMode: boolean = false;
+  followed: boolean = false;
+  currentUser: AuthData;
   ngOnInit() {
-    let currentUser: any
+
+
     if (this.stateService.getAuth()) {
-      currentUser = this.stateService.getAuth();
-      setTimeout(() => {
-        this.profileService.getCode(currentUser.usercode).subscribe(res => {
-          this.profile = res[0];
-        });
-      }, 300);
-      
+      this.currentUser = this.stateService.getAuth();
     }
+
+    this.route.queryParams.subscribe(params => {
+      if (params.pop) {
+        this.viewMode = true;
+        setTimeout(() => {
+          this.profileService.getCode(params.pop).subscribe(res => {
+            if (res[0].UserCode) {
+              this.profileService.getFollowCr(params.pop, this.currentUser.usercode).subscribe(f => {
+                this.profile = res[0];
+                if (f.length>0) {
+                  this.followed = true;
+                } else {
+                  this.followed = false;
+                }
+              })
+            }
+          });
+        }, 10);
+      } else {
+        this.viewMode = false;
+        setTimeout(() => {
+          this.profileService.getCode(this.currentUser.usercode).subscribe(res => {
+            this.profile = res[0];
+          });
+        }, 300);
+      }
+    });
+
+
   }
   numberOnly(event): boolean {
     const charCode = (event.which) ? event.which : event.keyCode;
@@ -68,6 +92,25 @@ export class UserProfileComponent implements OnInit {
       duration: 5000,
       panelClass: ['blue-snackbar']
     });
+  }
+
+  follow(userCode: string) {
+    let follow: Follow = new Follow();
+    follow.UserCode = userCode;
+    follow.FollowerCode = this.currentUser.usercode;
+    if (!this.followed) {
+      this.profileService.addFollow(follow).subscribe(add => {
+        if (add[0]) {
+          this.followed = true;
+        }
+      })
+    } else {
+      this.profileService.delFollow(follow).subscribe(add => {
+
+        this.followed = false;
+
+      })
+    }
   }
 
   save() {

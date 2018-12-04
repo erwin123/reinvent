@@ -1,0 +1,11 @@
+<table class="article-header" *ngIf="user.UserCode">
+  <tr>
+    <td>
+      <app-profile-pic [src]="user.Photo" [usercode]="user.UserCode"></app-profile-pic>
+    </td>
+    <td>
+      <div class="article-title"><a href="/#/main/article-read?pop={{articlecode}}">{{articletitle}}</a></div>
+        <div class="article-writer">{{user.FirstName}} {{user.LastName}} </div>
+    </td>
+  </tr>
+</table>

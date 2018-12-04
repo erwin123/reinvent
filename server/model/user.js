@@ -58,3 +58,41 @@ exports.deleteUser = function (key, done) {
         })
     })
 }
+
+
+
+//follow
+exports.getAllFollowByCriteria = function (Follow, done) {
+    var wh = db.whereCriteriaGenerator(Follow);
+    db.get(db.trx, function (err, connection) {
+        if (err) return done('Database problem')
+        connection.query("SELECT Id, FollowerCode, UserCode FROM Follow"+wh, function (err, rows) {
+            connection.release();
+            if (err) return done(err)
+            done(null, rows)
+        })
+    })
+}
+
+exports.insertFollow = function (Follow, done) {
+    var values = [Follow.UserCode,Follow.FollowerCode];
+    db.get(db.trx, function (err, connection) {
+        if (err) return done('Database problem')
+        connection.query('CALL sp_FollowGenerator(?,?)', values, function (err, result) {
+            connection.release();
+            if (err) return done(err)
+            done(null, result[0])
+        })
+    })
+}
+
+exports.deleteFollow = function (key1,key2, done) {
+    db.get(db.trx, function (err, connection) {
+        if (err) return done('Database problem')
+        connection.query('DELETE FROM Follow where UserCode=? AND FollowerCode=?', [key1,key2], function (err, result) {
+            connection.release();
+            if (err) return done(err)
+            done(null, result)
+        })
+    })
+}

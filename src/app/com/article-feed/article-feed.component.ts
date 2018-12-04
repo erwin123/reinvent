@@ -1,15 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Article, AuthData } from 'src/app/model';
+import { Component, OnInit } from '@angular/core';
+import { Article, AuthData, ArticleLikes } from 'src/app/model';
 import { StatemanagementService } from 'src/app/services/statemanagement.service';
 import { ArticleService } from 'src/app/services/article.service';
 import { ProfileService } from 'src/app/services/profile.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as globalVar from '../../global';
-import {DomSanitizer,SafeResourceUrl } from '@angular/platform-browser';
-import { sanitizeResourceUrl } from '@angular/core/src/sanitization/sanitization';
-import { MatDialog } from '@angular/material';
-import { ArticleComponent } from '../article/article.component';
-import { ScrollStrategyOptions } from '@angular/cdk/overlay';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-article-feed',
@@ -17,83 +13,116 @@ import { ScrollStrategyOptions } from '@angular/cdk/overlay';
   styleUrls: ['./article-feed.component.css']
 })
 export class ArticleFeedComponent implements OnInit {
-  baseAsssetUrl:string = globalVar.global_url+"assets/picture/content/";
+  baseAsssetUrl: string = globalVar.global_url + "assets/picture/content/";
   authData: AuthData = new AuthData();
   isLoading: boolean = false;
-  constructor(public dialog: MatDialog,private sanitizer: DomSanitizer,private route: ActivatedRoute, private stateService: StatemanagementService, private artService: ArticleService, private userService: ProfileService) { }
+  constructor(private router: Router,
+    private sanitizer: DomSanitizer, private route: ActivatedRoute, private stateService: StatemanagementService, private artService: ArticleService, private userService: ProfileService) { }
   articles: Array<Article> = new Array<Article>();
   likeIt: boolean = true;
+  
   ngOnInit() {
     this.isLoading = true;
     this.authData = this.stateService.getAuth();
     this.route.queryParams.subscribe(params => {
       if (params) {
-
-        if (params['fave'] === "1") {
+        if (params['fave'] === "1" && this.authData) {
           this.artService.getFaveFeed(this.authData.usercode).subscribe(res => {
             this.articles = res;
             this.articles.forEach(el => {
               el.TextSanitizer = this.sanitizer.bypassSecurityTrustHtml(el.Text);
-              this.artService.getMedia(el.ArticleCode).subscribe(med => {
-                el.Medias = med;
-              })
-              this.userService.getCode(el.CreatedBy).subscribe(writer => {
-                el.Writer = writer[0];
-              })
+              if (el.Likes && this.authData) {
+                el.LikeIt = el.Likes.find(f => f.UserCode === this.authData.usercode) ? true : false;
+                if (el.LikeIt) {
+                  let myLike: ArticleLikes = new ArticleLikes();
+                  myLike = el.Likes.find(f => f.UserCode === this.authData.usercode);
+                  el.Likes = el.Likes.filter(del => del.UserCode !== myLike.UserCode);
+                  el.Likes.unshift(myLike);
+                }
+              }
             });
-          },err=>{},()=>{this.isLoading = false;});
-          
-        } else if(params['article']){
-          this.artService.getFeed(params['article']).subscribe(res => {
-            this.articles = res;
-            this.articles.forEach(el => {
-              el.TextSanitizer = this.sanitizer.bypassSecurityTrustHtml(el.Text);
-              this.artService.getMedia(el.ArticleCode).subscribe(med => {
-                el.Medias = med;
-              })
-              this.userService.getCode(el.CreatedBy).subscribe(writer => {
-                el.Writer = writer[0];
-              })
-            });
-          },err=>{},()=>{this.isLoading = false;});
-        }else if(params['pop']){
-          this.readIt(params['pop']);
-        }else {
+          }, err => { }, () => { this.isLoading = false; });
+        } else {
           this.artService.getAllFeed().subscribe(res => {
             this.articles = res;
             this.articles.forEach(el => {
               el.TextSanitizer = this.sanitizer.bypassSecurityTrustHtml(el.Text);
-              this.artService.getMedia(el.ArticleCode).subscribe(med => {
-                el.Medias = med;
-              })
-              this.userService.getCode(el.CreatedBy).subscribe(writer => {
-                el.Writer = writer[0];
-              })
+              if (el.Likes && this.authData) {
+                el.LikeIt = el.Likes.find(f => f.UserCode === this.authData.usercode) ? true : false;
+                if (el.LikeIt) {
+                  let myLike: ArticleLikes = new ArticleLikes();
+                  myLike = el.Likes.find(f => f.UserCode === this.authData.usercode);
+                  el.Likes = el.Likes.filter(del => del.UserCode !== myLike.UserCode);
+                  el.Likes.unshift(myLike);
+                }
+              }
             });
-          },err=>{},()=>{this.isLoading = false;});
+          }, err => { }, () => { this.isLoading = false; });
         }
       }
     });
   }
 
-    clickLike() {
-      this.likeIt = !this.likeIt;
-    }
 
-    readIt(articleCode:string){
-      let parsing:Article = this.articles.find(f=>f.ArticleCode === articleCode);
-      const dialogRef = this.dialog.open(ArticleComponent, {
-        maxWidth:'650px',
-        minWidth:'300px',
-        width: '75%',
-        data: { parsing },
-        position:{top:'50px'},
-        id:"article-read"
-      });
-  
-      dialogRef.afterClosed().subscribe(result => {
-        
-        
+  clickLike(articleCode: string) {
+    let userCode: string = this.authData.usercode;
+    if (this.articles.find(art => art.ArticleCode === articleCode).Likes) {
+      if (this.articles.find(art => art.ArticleCode === articleCode).Likes.find(like => like.UserCode === userCode)) {
+        //dislike
+        this.artService.deleteArticleLikes(articleCode, userCode).subscribe(del => {
+          let likes: Array<ArticleLikes> = new Array<ArticleLikes>();
+          likes = this.articles.find(art => art.ArticleCode === articleCode).Likes;
+          likes = likes.filter(delitem => delitem.UserCode !== userCode);
+          this.articles.find(art => art.ArticleCode === articleCode).LikeIt = false;
+          if (likes.length > 0) {
+            this.articles.find(art => art.ArticleCode === articleCode).Likes = likes;
+          } else {
+            this.articles.find(art => art.ArticleCode === articleCode).Likes = undefined;
+          }
+        })
+      } else {
+        //like
+        let artLike: ArticleLikes = new ArticleLikes();
+        artLike.ArticleCode = articleCode;
+        artLike.UserCode = userCode;
+        this.artService.postArticleLikes(artLike).subscribe(add => {
+          this.articles.find(art => art.ArticleCode === articleCode).Likes.unshift(artLike);
+          this.articles.find(art => art.ArticleCode === articleCode).LikeIt = true;
+        });
+      }
+    } else {
+      //like
+      let artLike: ArticleLikes = new ArticleLikes();
+      artLike.ArticleCode = articleCode;
+      artLike.UserCode = userCode;
+      this.artService.postArticleLikes(artLike).subscribe(add => {
+        this.articles.find(art => art.ArticleCode === articleCode).Likes = new Array<ArticleLikes>();
+        this.articles.find(art => art.ArticleCode === articleCode).Likes.push(artLike);
+        this.articles.find(art => art.ArticleCode === articleCode).LikeIt = true;
       });
     }
   }
+
+  readItUrl(articleCode: string) {
+    this.router.navigate(['main/article-read'], { queryParams: { pop: articleCode } });
+  }
+
+  // readIt(articleCode: string) {
+
+  //   let parsing: Article = this.articles.find(f => f.ArticleCode === articleCode);
+  //   const dialogRef = this.dialog.open(ArticleComponent, {
+  //     maxWidth: '600px',
+  //     minWidth: '320px',
+  //     width: '88%',
+  //     height: 'auto',
+  //     data: { parsing },
+  //     position: { top: '50px' },
+  //     id:"article-read"
+  //   });
+  //   dialogRef.afterClosed().subscribe(result => {
+
+  //     //this.location.go('/main/article-feed');
+  //     //this.router.navigate(['main/article-feed']);
+  //   });
+  // }
+}

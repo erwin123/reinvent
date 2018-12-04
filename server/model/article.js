@@ -72,6 +72,18 @@ exports.getAllArticleFeedByCriteria = function (Article, done) {
     })
 }
 
+exports.getAllLikeArticle = function (ArticleLike, done) {
+    var wh = db.whereCriteriaGenerator(ArticleLike);
+    db.get(db.trx, function (err, connection) {
+        if (err) return done('Database problem')
+        connection.query("SELECT a.Id, a.ArticleCode,a.UserCode,b.FirstName, b.LastName FROM ArticleLikes a INNER JOIN User b ON a.UserCode = b.UserCode "+wh, function (err, rows) {
+            connection.release();
+            if (err) return done(err)
+            done(null, rows)
+        })
+    })
+}
+
 exports.getAllMediaArticle = function (Media, done) {
     var wh = db.whereCriteriaGenerator(Media);
     db.get(db.trx, function (err, connection) {
@@ -96,6 +108,18 @@ exports.insertArticleCategory = function (ArticleCategory, done) {
     })
 }
 
+exports.insertArticleLikes = function (ArticleLike, done) {
+    var values = [ArticleLike.UserCode,ArticleLike.ArticleCode];
+    db.get(db.trx, function (err, connection) {
+        if (err) return done('Database problem')
+        connection.query('CALL sp_ArticleLikesGenerator(?,?)', values, function (err, result) {
+            connection.release();
+            if (err) return done(err)
+            done(null, result[0])
+        })
+    })
+}
+
 exports.insertMediaArticle = function (MediaArticle, done) {
     var values = [MediaArticle.MediaType,MediaArticle.MediaPath,MediaArticle.ArticleCode];
     db.get(db.trx, function (err, connection) {
@@ -113,6 +137,18 @@ exports.deleteArticleCategory = function (catCode, artCode, done) {
     db.get(db.trx, function (err, connection) {
         if (err) return done('Database problem')
         connection.query('DELETE FROM ArticleCategory where CategoryCode = ? AND ArticleCode=?', values, function (err, result) {
+            connection.release();
+            if (err) return done(err)
+            done(null, result[0])
+        })
+    })
+}
+
+exports.deleteArticleLikes = function (articleCode, userCode, done) {
+    var values = [articleCode,userCode];
+    db.get(db.trx, function (err, connection) {
+        if (err) return done('Database problem')
+        connection.query('DELETE FROM ArticleLikes where ArticleCode = ? AND UserCode=?', values, function (err, result) {
             connection.release();
             if (err) return done(err)
             done(null, result[0])

@@ -1,0 +1,6 @@
+<div *ngIf="src" class="example-header-image"
+  (click)="viewProfile()">
+  <img class="photo-writer" [src]="src" alt=""
+  [class.photo-writer-medium]="size==='medium'"
+  [class.photo-writer-small]="size==='small'"/>
+</div>

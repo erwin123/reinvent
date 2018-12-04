@@ -1,7 +1,9 @@
 var art = require('../model/article');
+var writer = require('../model/user');
 const config = require('../config');
 var express = require('express');
 var router = express.Router();
+var async = require('async');
 
 router.get('/', function (req, res, next) {
     art.getAllArticle(function (err, rows) {
@@ -16,9 +18,49 @@ router.post('/cr/', function (req, res, next) {
     if (req.body) {
         art.getAllArticleByCriteria(req.body, function (err, rows) {
             if (err) { res.json(err); }
-            else { res.json(rows); }
+            else {
+                rows.forEach((el, idx) => {
+                    async.parallel([
+                        (callback) => {
+                            art.getAllMediaArticle({ ArticleCode: el.ArticleCode }, (e1, r1) => {
+                                el.Medias = r1;
+                                callback(e1, r1);
+                            });
+                        },
+                        (callback) => {
+                            writer.getAllUserByCriteria({ UserCode: el.CreatedBy }, (e2, r2) => {
+                                el.Writer = r2[0];
+                                callback(e2, r2);
+                            });
+                        },
+                        (callback) => {
+                            art.getAllLikeArticle({ ArticleCode: el.ArticleCode }, (e3, r3) => {
+                                if (r3.length > 0) {
+                                    el.Likes = r3;
+                                }
+                                callback(e3, r3);
+                            });
+                        }
+                    ], (err, results) => {
+                        if (rows.length - 1 === idx) {
+                            setTimeout(() => {
+                                res.json(rows);
+                            }, 1000);
+                        }
+                    });
+                });
+
+
+            }
         });
     }
+});
+
+router.post('/like', function (req, res, next) {
+    art.insertArticleLikes(req.body, function (err, resultInsert) {
+        if (err) { res.json(err); }
+        else { res.json(resultInsert); }
+    });
 });
 
 router.post('/', function (req, res, next) {
@@ -35,8 +77,15 @@ router.put('/', function (req, res, next) {
     });
 });
 
-router.delete('/:key', function (req, res, next) {
+router.delete('/like/:key', function (req, res, next) {
     art.deleteArticle(req.params.key, function (err, rows) {
+        if (err) { res.json(err); }
+        else { res.json(rows); }
+    });
+});
+
+router.delete('/like/:key1/:key2', function (req, res, next) {
+    art.deleteArticleLikes(req.params.key1,req.params.key2, function (err, rows) {
         if (err) { res.json(err); }
         else { res.json(rows); }
     });
@@ -46,7 +95,38 @@ router.post('/fave/cr/', function (req, res, next) {
     if (req.body) {
         art.getAllArticleFeedByCriteria(req.body, function (err, rows) {
             if (err) { res.json(err); }
-            else { res.json(rows); }
+            else {
+                rows.forEach((el, idx) => {
+                    async.parallel([
+                        (callback) => {
+                            art.getAllMediaArticle({ ArticleCode: el.ArticleCode }, (e1, r1) => {
+                                el.Medias = r1;
+                                callback(e1, r1);
+                            });
+                        },
+                        (callback) => {
+                            writer.getAllUserByCriteria({ UserCode: el.CreatedBy }, (e2, r2) => {
+                                el.Writer = r2[0];
+                                callback(e2, r2);
+                            });
+                        },
+                        (callback) => {
+                            art.getAllLikeArticle({ ArticleCode: el.ArticleCode }, (e3, r3) => {
+                                if (r3.length > 0) {
+                                    el.Likes = r3;
+                                }
+                                callback(e3, r3);
+                            });
+                        }
+                    ], (err, results) => {
+                        if (rows.length - 1 === idx) {
+                            setTimeout(() => {
+                                res.json(rows);
+                            }, 1000);
+                        }
+                    });
+                });
+            }
         });
     }
 });
@@ -94,7 +174,7 @@ router.post('/category', function (req, res, next) {
 
 
 router.delete('/category/:key1/:key2', function (req, res, next) {
-    art.deleteArticleCategory(req.params.key1,req.params.key2, function (err, resultInsert) {
+    art.deleteArticleCategory(req.params.key1, req.params.key2, function (err, resultInsert) {
         if (err) { res.json(err); }
         else { res.json(resultInsert); }
     });

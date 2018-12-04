@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterExtService } from './services/router-ext.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
+  constructor(private routerExtService: RouterExtService){}
 }

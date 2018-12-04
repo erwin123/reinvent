@@ -1,7 +1,5 @@
-
-
 .content-read {
-    margin: 0;
+    margin: 15px 5px 30px 5px;
 }
 
 .article-card{
@@ -10,9 +8,4 @@
 
 .like{
     color:#ff1e4f;
-}
-
-.photo-writer{
-    border-radius: 50%;
-    width: 50px;
 }

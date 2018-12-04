@@ -1,10 +1,14 @@
 <div class="profile-container">
   <mat-card class="profile-card">
-    <mat-card-content>
+    <div *ngIf="!profile.Id" style="height:100px;text-align: center;vertical-align:middle;color:#202020;">
+      
+      Memuat...
+    </div>
+    <mat-card-content *ngIf="profile.Id">
       <h2>Profil</h2>
-      <h6><i class="material-icons" style="color:#0077ff;font-size:18px;">verified_user</i>
+      <h6 *ngIf="!viewMode"><i class="material-icons" style="color:#0077ff;font-size:18px;">verified_user</i>
         Lengkapi profil agar menjadi verified akun</h6>
-      <div class="profile-form">
+      <div class="profile-form" *ngIf="!viewMode">
         <img class="profile-pic" *ngIf="profile.Photo" [src]="profile.Photo" alt="" />
         <mat-form-field>
           <input matInput placeholder="Email" [(ngModel)]="profile.Username" disabled>
@@ -16,7 +20,8 @@
           <input matInput placeholder="Nama Belakang" [(ngModel)]="profile.LastName">
         </mat-form-field>
         <mat-form-field>
-          <input [(ngModel)]="profile.BirthDate" matInput [matDatepicker]="dp" placeholder="Tanggal Lahir" [formControl]="date">
+          <input [(ngModel)]="profile.BirthDate" matInput [matDatepicker]="dp" placeholder="Tanggal Lahir"
+            [formControl]="date">
           <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
           <mat-datepicker #dp></mat-datepicker>
         </mat-form-field>
@@ -34,8 +39,23 @@
           <textarea matInput placeholder="Deskripsi Diri" [(ngModel)]="profile.About"></textarea>
         </mat-form-field>
       </div>
+
+      <div class="view-form" *ngIf="viewMode">
+        <img class="profile-pic" *ngIf="profile.Photo" [src]="profile.Photo" alt="" />
+        <br />
+        <div style="font-size: 14px;font-weight: bold;">{{profile.FirstName}} {{profile.LastName}}</div>
+        <div>{{profile.Gender ===1 ? 'Laki-laki' : 'Perempuan'}}</div><br />
+        <div style="text-align: left !important;">
+          {{profile.About}}
+        </div>
+        <button mat-flat-button color="primary" (click)="follow(profile.UserCode)" [class.followed]="followed">
+          <i class="material-icons" style="font-size:20px;" *ngIf="!followed">add</i>
+          <i class="material-icons" style="font-size:20px;" *ngIf="followed">check</i>
+          {{followed?'Following':'Follow'}}
+        </button>
+      </div>
     </mat-card-content>
-    <mat-card-actions align="end">
+    <mat-card-actions align="end" *ngIf="!viewMode">
       <button mat-flat-button color="primary" (click)="save()">
         <i class="material-icons" style="font-size:20px;">face</i> SIMPAN
       </button>

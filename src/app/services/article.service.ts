@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as globalVar from '../global';
-import { Category, UserCategory, Article, MediaArticle, ArticleCategory } from '../model';
+import { Category, UserCategory, Article, MediaArticle, ArticleCategory, ArticleLikes } from '../model';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +50,18 @@ export class ArticleService {
     const headers = this._headers.append('x-access-token', "init");
     let url = globalVar.global_api + "/article/";
     return this.httpClient.post<Article[]>(url, article, { headers: headers, withCredentials: true }).pipe(map(res => { return res; }));
+  }
+
+  postArticleLikes(articleLike:ArticleLikes) {
+    const headers = this._headers.append('x-access-token', "init");
+    let url = globalVar.global_api + "/article/like";
+    return this.httpClient.post<ArticleLikes[]>(url, articleLike, { headers: headers, withCredentials: true }).pipe(map(res => { return res; }));
+  }
+
+  deleteArticleLikes(articleCode:string, userCode:string) {
+    const headers = this._headers.append('x-access-token', "init");
+    let url = globalVar.global_api + "/article/like";
+    return this.httpClient.delete(url+"/"+articleCode+"/"+userCode, { headers: headers, withCredentials: true }).pipe(map(res => { return res; }));
   }
 
   postArticleCategory(articleCategory:ArticleCategory) {

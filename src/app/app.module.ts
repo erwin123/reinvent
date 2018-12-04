@@ -47,7 +47,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { ArticleFeedComponent } from './com/article-feed/article-feed.component';
-import { ArticleComponent } from './com/article/article.component';
 import { UserProfileComponent } from './com/user-profile/user-profile.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CategoryComponent } from './com/category/category.component';
@@ -69,6 +68,13 @@ import { NgxEditorModule } from 'ngx-editor';
 import { SortdescPipe } from './pipes/sortdesc.pipe';
 import { SanitizePipe } from './pipes/sanitize.pipe';
 import { StriphtmlPipe } from './pipes/striphtml.pipe';
+import { FollowComponent } from './com/follow/follow.component';
+import { ProfilePicComponent } from './com/profile-pic/profile-pic.component';
+import { ArticleHeaderComponent } from './com/article-header/article-header.component';
+import { ArticleReadComponent } from './com/article-read/article-read.component';
+import { LoadingComponent } from './com/loading/loading.component';
+import { RouterExtService } from './services/router-ext.service';
+import { Ng2TrackScrollModule } from 'ng2-track-scroll';
 
 
 export function getAuthServiceConfigs() {
@@ -82,7 +88,6 @@ export function getAuthServiceConfigs() {
       {
         id: GoogleLoginProvider.PROVIDER_ID,
         provider: new GoogleLoginProvider("1001880322458-ivegbevrkil3ocf520k3q7av9o2f1ojc.apps.googleusercontent.com")
-        
         //provider: new GoogleLoginProvider("452906102008-l8akc36n7mbt9ocu5nu2lkp71obongos.apps.googleusercontent.com")
       },
       {
@@ -101,7 +106,6 @@ export function getAuthServiceConfigs() {
     MainComponent,
     LandingComponent,
     ArticleFeedComponent,
-    ArticleComponent,
     UserProfileComponent,
     CategoryComponent,
     SettingComponent,
@@ -111,7 +115,12 @@ export function getAuthServiceConfigs() {
     FiltermediaPipe,
     SortdescPipe,
     SanitizePipe,
-    StriphtmlPipe
+    StriphtmlPipe,
+    FollowComponent,
+    ProfilePicComponent,
+    ArticleHeaderComponent,
+    ArticleReadComponent,
+    LoadingComponent
   ],
   imports: [
     BrowserModule,
@@ -124,7 +133,7 @@ export function getAuthServiceConfigs() {
     HttpModule,
     HttpClientModule,
     SocialLoginModule,
-
+    Ng2TrackScrollModule.forRoot(),
     MatCheckboxModule,
     MatCheckboxModule,
     MatButtonModule,
@@ -160,10 +169,12 @@ export function getAuthServiceConfigs() {
     NguCarouselModule,
     NgxEditorModule
   ],
-  providers: [AuthguardService, {
+  providers: [AuthguardService,RouterExtService, {
     provide: AuthServiceConfig,
     useFactory: getAuthServiceConfigs
   }],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  
+}

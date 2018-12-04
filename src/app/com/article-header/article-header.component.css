@@ -1,0 +1,24 @@
+.article-header {
+    border-collapse: collapse;
+}
+
+.article-header td { 
+    padding:0; margin:0;
+}
+
+.article-title{
+    font-size: 14px;
+    font-weight: bold;
+    padding:3px 5px 5px 5px;
+}
+
+.article-title a{
+    color:#202020;
+    text-decoration: none;
+}
+
+.article-writer{
+    font-size: 11px;
+    color:#202020;
+    padding:0px 5px 5px 5px;
+}

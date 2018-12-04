@@ -4,12 +4,17 @@
 'use strict';
 
 //dev
-// export const global_api='http://localhost:3005/api';
-// export const global_url='https://localhost:4200/';
+ // export const global_api='http://localhost:3005/api';
+//  export const global_url='https://localhost:4200/';
 
 //prod
 export const global_api='https://api-revamp.experd.com/api';
-export const global_url='https://revamp.experd.com/';
+// export const global_url='https://revamp.experd.com/';
+
+
+//prod2
+//export const global_api='https://api.revamp.id/api';
+export const global_url='https://revamp.id/';
 
 export const storageVideo='assets/video/';
 export const storagePhoto='assets/picture/';

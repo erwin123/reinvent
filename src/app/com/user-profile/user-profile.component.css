@@ -15,3 +15,11 @@
     margin-bottom: 20px;
 }
 
+.view-form{
+    text-align: center;
+}
+
+.followed{
+    background: #a0a0a0;
+    color:#3a3a3a;
+}

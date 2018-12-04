@@ -1,0 +1,15 @@
+.photo-writer{
+    border-radius: 50%;
+    width: 50px;
+    cursor: pointer;
+}
+
+.photo-writer-small{
+    border-radius: 50%;
+    width: 20px !important;
+}
+
+.photo-writer-medium{
+    border-radius: 50%;
+    width: 35px !important;
+}

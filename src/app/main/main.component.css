@@ -74,7 +74,7 @@ h1 .re-title2 {
 }
 
 .example-sidenav-container {
-  background-color: #ffffff;
-  background-image: url("https://www.transparenttextures.com/patterns/skulls.png");
+  background-color: #f1f1f1;
+  /* background-image: url("https://www.transparenttextures.com/patterns/skulls.png"); */
   /* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
 }

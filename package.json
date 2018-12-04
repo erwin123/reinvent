@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "start:prod": "ng build --prod --base-href https://revamp.experd.com/",
+    "start:prod2": "ng build --prod --base-href https://revamp.id/",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -30,6 +31,7 @@
     "@ngu/carousel": "^1.4.8",
     "angular-6-social-login-v2": "^1.0.5",
     "array-join": "^2.3.0",
+    "async": "^2.6.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "connect-timeout": "^1.9.0",
@@ -50,6 +52,7 @@
     "moment": "^2.22.2",
     "mysql": "^2.16.0",
     "mysql2": "^1.6.3",
+    "ng2-track-scroll": "^1.1.5",
     "ngx-bootstrap": "^3.1.1",
     "ngx-cookie-service": "^2.0.0",
     "ngx-editor": "^4.1.0",

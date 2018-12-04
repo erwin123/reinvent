@@ -20,7 +20,9 @@ export class Article {
     UserCode:string;
     Medias:Array<MediaArticle> = new Array<MediaArticle>();
     Writer:User = new User();
+    Likes:Array<ArticleLikes> = new Array<ArticleLikes>();
     TextSanitizer:SafeHtml;
+    LikeIt:boolean=false;
 }
 
 export class MediaArticle {
@@ -51,7 +53,14 @@ export class Comment {
 export class ArticleLikes {
     Id: number;
     ArticleCode: string;
-    Username: string;
+    UserCode: string;
+}
+
+export class Follow {
+    Id: number;
+    UserCode: string;
+    FollowerCode: string;
+    Follower:Array<User> = new Array<User>();
 }
 
 export class Category {

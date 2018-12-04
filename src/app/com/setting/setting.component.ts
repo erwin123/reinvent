@@ -13,33 +13,33 @@ import { StatemanagementService } from 'src/app/services/statemanagement.service
 })
 export class SettingComponent implements OnInit, AfterViewInit {
   regularDistribution = 100 / 5 + '%';
-  cats:Array<Category> = new Array<Category>();
+  cats: Array<Category> = new Array<Category>();
   assetUrl = globalVar.global_url + "assets/picture/content/";
   authData: AuthData = new AuthData();
-  constructor(private catService:CategoryService, private stateService:StatemanagementService) { }
+  constructor(private catService: CategoryService, private stateService: StatemanagementService) { }
   ngOnInit() {
     this.authData = this.stateService.getAuth();
     let q = forkJoin(this.catService.getAll(), this.catService.getAllCatUser(this.authData.usercode));
-    q.subscribe(res=>{
-      this.cats = leftJoin(res[0],res[1],{ key:"CategoryCode"});
+    q.subscribe(res => {
+      this.cats = leftJoin(res[0], res[1], { key: "CategoryCode" });
       console.log(this.cats);
     });
   }
-  ngAfterViewInit(){
-    
+  ngAfterViewInit() {
+
   }
 
-  following(catCode:string){
-    if(this.cats.find(f => f.CategoryCode === catCode).UserCode){
-      this.catService.delCatUser(this.authData.usercode, catCode).subscribe(del=>{
+  following(catCode: string) {
+    if (this.cats.find(f => f.CategoryCode === catCode).UserCode) {
+      this.catService.delCatUser(this.authData.usercode, catCode).subscribe(del => {
         this.cats.find(f => f.CategoryCode === catCode).UserCode = undefined;
       });
-    }else{
-      this.catService.addCatUser(this.authData.usercode, catCode).subscribe(add=>{
-        this.cats.find(f => f.CategoryCode === catCode).UserCode =this.authData.usercode;
+    } else {
+      this.catService.addCatUser(this.authData.usercode, catCode).subscribe(add => {
+        this.cats.find(f => f.CategoryCode === catCode).UserCode = this.authData.usercode;
       });
     }
 
   }
-  
+
 }

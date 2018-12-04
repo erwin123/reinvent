@@ -1,4 +1,4 @@
-<div class="article-container">
+<div class="article-container" *ngIf="authData">
   <mat-card class="article-card">
     <mat-card-content>
       <h2>Mulai Menulis</h2>
@@ -49,4 +49,9 @@
     </div>
   </mat-card>
 
+</div>
+
+<div style="text-align: center;margin-top: 50px;" *ngIf="!authData">
+  <img [src]="baseAsssetUrl+'revamp_logo.png'" style="width:56px;height:56px;margin-left:10px;" alt='' /><br/>
+  Bergabung bersama revamp.id untuk wawasan dan koneksi, Anda bisa menulis, berbagi, dan memantau artikel menarik.
 </div>
