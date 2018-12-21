@@ -15,10 +15,6 @@ export class RouterExtService {
         this.previousUrl = this.currentUrl;
         this.currentUrl = event.url;
       };
-
-      if(event instanceof Scroll){
-        console.log(event);
-      }
     });
   }
 

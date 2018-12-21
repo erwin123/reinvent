@@ -19,23 +19,14 @@ export class ArticleReadComponent implements OnInit {
   private previousUrl: string = undefined;
   private currentUrl: string = undefined;
   constructor(private router: Router, private sanitizer: DomSanitizer, private articleService: ArticleService,
-    private route: ActivatedRoute, private stateService: StatemanagementService,private routerExtService: RouterExtService) {
-    
+    private route: ActivatedRoute, private stateService: StatemanagementService, private routerExtService: RouterExtService) {
+
   }
 
   public goToPrevious(): void {
     let previous = this.routerExtService.getPreviousUrl();
-    console.log(previous);
-    if(previous)
+    if (previous)
       this.routerExtService.router.navigateByUrl(previous);
-  }
-
-  enter() {
-    console.log('Track scroll enter is working!');
-  }
- 
-  leave() {
-    console.log('Track scroll leave is working too!');
   }
 
   ngOnInit() {
@@ -54,7 +45,13 @@ export class ArticleReadComponent implements OnInit {
               this.o.Likes.unshift(myLike);
             }
           }
+          if (this.o.Viewed)
+            this.o.Viewed++;
+          else
+            this.o.Viewed = 1;
+          this.articleService.putArticle(this.o).subscribe();
         });
+
     });
 
   }

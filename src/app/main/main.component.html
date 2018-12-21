@@ -1,16 +1,16 @@
-<div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
-  <mat-toolbar color="primary" class="example-toolbar"
-  style="color:#202020;background: #fff;border-bottom:1px #ccc solid;">
+<div class="example-container" [class.example-is-mobile]="mobileQuery.matches" style="height: 100vh;overflow-y: hidden;">
+  <mat-toolbar color="primary" class="example-toolbar" style="color:#202020;background: #fff;border-bottom:1px #ccc solid;">
     <button mat-icon-button (click)="snav.toggle()" style="width:35px;height:35px;">
       <mat-icon>menu</mat-icon>
-      
+
     </button>
     <img [src]="baseAsssetUrl+'revamp_logo.png'" style="width:26px;height:26px;margin-left:10px;" alt='' />&nbsp;
-    <h1 *ngIf="!mobileQuery.matches" class="example-app-name"><span class="re-title1">re</span><span class="re-title2">vamp</span><span style="margin-left: 5px;font-size: 14px;">#pensiunitukesempatan</span></h1>
+    <h1 *ngIf="!mobileQuery.matches" class="example-app-name"><span class="re-title1">re</span><span class="re-title2">vamp</span><span
+        style="margin-left: 5px;font-size: 14px;">#pensiunitukesempatan</span></h1>
     <span class="spacer"></span>
     <span class="main-search">
-      <input class="main-search-input" placeholder="Cari">
-      <button mat-button class="remove-search" matSuffix mat-icon-button aria-label="Clear" (click)="serachValue=''">
+      <input class="main-search-input" placeholder="Cari" [(ngModel)]="searchValue" (keyup.enter)="globalSearch()">
+      <button mat-button class="remove-search" matSuffix mat-icon-button aria-label="Clear" (click)="globalSearch()">
         <mat-icon>search</mat-icon>
       </button>
     </span>
@@ -41,7 +41,7 @@
     </span>
   </mat-toolbar>
 
-  <mat-sidenav-container class="example-sidenav-container"  [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+  <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
     <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
       fixedTopGap="56">
       <mat-nav-list>
@@ -50,13 +50,28 @@
         </a>
       </mat-nav-list>
     </mat-sidenav>
-    <mat-sidenav-content>
+    <mat-sidenav-content id="main-scroll" style="height: 90vh;overflow-y: auto;">
       <div [fxLayout]="'row wrap'" fxLayoutAlign="center none">
-        <div fxFlex="25" fxHide.xs fxFlex.sm="10"></div>
-        <div fxFlex="50" fxFlex.xs="98" fxFlex.sm="80">
-          <router-outlet  (activate)="onActivate($event)"></router-outlet>
+        <div fxFlex="25" fxHide.xs fxFlex.sm="10">
+          <mat-card class="contributor" *ngIf="articles.length >0">
+            <h4>Trends</h4>
+            <div *ngFor="let o of articles" style="margin-bottom:10px;">
+              <app-article-header [id]="o.ArticleCode" *ngIf="o.Writer" [user]="o.Writer" [articlecode]="o.ArticleCode"
+                [articletitle]="o.Title"></app-article-header>
+            </div>
+          </mat-card>
         </div>
-        <div fxFlex="25" fxHide.xs fxFlex.sm="10"></div>
+        <div fxFlex="50" fxFlex.xs="98" fxFlex.sm="80">
+          <router-outlet (activate)="onActivate($event)"></router-outlet>
+        </div>
+        <div fxFlex="25" fxHide.xs fxFlex.sm="10">
+          <mat-card class="contributor" *ngIf="profiles.length >0">
+            <h4>Penulis</h4>
+            <div *ngFor="let profile of profiles" style="margin-bottom:10px;">
+              <app-profile-card [profile]="profile"></app-profile-card>
+            </div>
+          </mat-card>
+        </div>
       </div>
     </mat-sidenav-content>
   </mat-sidenav-container>

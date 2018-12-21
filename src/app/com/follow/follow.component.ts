@@ -19,14 +19,12 @@ export class FollowComponent implements OnInit, AfterViewInit {
     if (this.Follower === "1") { //follower mode
       this.profileService.getFollow(this.UserCode).subscribe(res => {
         this.follow = res;
-        console.log(this.follow);
       })
     }
     if (this.Follower === "0") { //following mode
       this.header = "Following";
       this.profileService.getFollow(this.UserCode, false).subscribe(res => {
         this.follow = res;
-        console.log(this.follow);
       })
     }
   }

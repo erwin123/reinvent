@@ -1,33 +1,10 @@
-<div class="content" trackScroll 
-(trackScrollEnter)="enter()" 
-(trackScrollLeave)="leave()">
+<div class="content" id="content">
   <div *ngIf="articles.length==0 && !isLoading" style="height:100px;text-align: center;vertical-align:middle;color:#ccc;">Artikel
     tidak ditemukan</div>
+    <div *ngIf="searchResult && !isLoading" style="height:30px;text-align: center;vertical-align:middle;color:rgb(112, 112, 112);">Hasil pencarian {{searchKey}}</div>
   <app-loading *ngIf="articles.length==0  && isLoading"></app-loading>
-  <mat-card class="article-card" *ngFor="let o of articles | sortdesc">
-    <app-article-header *ngIf="o.Writer" [user]="o.Writer" [articlecode]="o.ArticleCode" [articletitle]="o.Title"></app-article-header>
-    <app-carousel (click)="readItUrl(o.ArticleCode)" *ngIf="o.Medias" [medias]="o.Medias"></app-carousel>
-    <!-- <img mat-card-image src="{{o.MediaPath}}" alt="Photo of a Shiba Inu"> -->
-    <mat-card-content>
-      <p class="article-text" (click)="readItUrl(o.ArticleCode)">
-        {{o.Text | striphtml}}
-      </p>
-      <span style="font-size:12px;">{{o.CreatedDate | date}}</span>
-    </mat-card-content>
-    <mat-card-actions *ngIf="authData">
-      <button title="like toggle" mat-icon-button (click)="clickLike(o.ArticleCode)" [class.like]="o.LikeIt">
-        <mat-icon aria-label="like it">favorite</mat-icon>
-      </button>
-      <span style="font-size: 10px;font-weight: bold;" *ngIf="o.Likes && authData">
-        {{o.Likes ?
-        o.Likes.length > 1 ?
-        o.Likes[0].UserCode === authData.usercode ?
-        'Anda dan '+ (o.Likes.length-1)+' orang lainnya suka' : o.Likes[0].FirstName+' '+o.Likes[0].LastName+' dan '+
-        (o.Likes.length-1)+' orang lainnya suka'
-        : o.Likes[0].UserCode === authData.usercode ?
-        'Anda suka' : o.Likes[0].FirstName+' '+o.Likes[0].LastName+' suka'
-        :''}}
-      </span>
-    </mat-card-actions>
-  </mat-card>
+  <div *ngFor="let o of articles | sortdesc">
+    <app-article-card [article]="o"></app-article-card>
+  </div>
+  <button mat-stroked-button color="primary" class="load-more" style="width: 100%;" (click)="morePrev()">Muat Lebih</button>
 </div>

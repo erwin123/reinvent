@@ -9,7 +9,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import * as _moment from 'moment';
 import * as _rollupMoment from 'moment';
 import { StatemanagementService } from 'src/app/services/statemanagement.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 const moment = _rollupMoment || _moment;
 
@@ -37,7 +37,7 @@ export const MY_FORMATS = {
 })
 export class UserProfileComponent implements OnInit {
 
-  constructor(private profileService: ProfileService, private route: ActivatedRoute, public snackBar: MatSnackBar, private stateService: StatemanagementService) { }
+  constructor(private router: Router,private profileService: ProfileService, private route: ActivatedRoute, public snackBar: MatSnackBar, private stateService: StatemanagementService) { }
   profile: User = new User();
   date = new FormControl(moment());
   viewMode: boolean = false;
@@ -45,10 +45,13 @@ export class UserProfileComponent implements OnInit {
   currentUser: AuthData;
   ngOnInit() {
 
-
+    
     if (this.stateService.getAuth()) {
       this.currentUser = this.stateService.getAuth();
+    }else{
+      this.router.navigate(['main/write']);
     }
+    
 
     this.route.queryParams.subscribe(params => {
       if (params.pop) {

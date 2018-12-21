@@ -2,12 +2,13 @@
   <h2>{{header}} ({{follow.length}})</h2>
   <div class="each-follow">
     <div [fxLayout]="'row wrap'" fxLayoutAlign="center none" *ngIf="follow.length>0">
-      <div fxFlex.xs="40%" fxFlex.lg="30%" fxFlex.md="30%" fxFlex.sm="30%"
+      <div fxFlex.xs="45%" fxFlex.lg="25%" fxFlex.md="20%" fxFlex.sm="20%"
       *ngFor="let obj of follow;" class="follower">
-        <button mat-icon-button (click)="viewProfile(obj.Follower)">
+        <!-- <button mat-icon-button (click)="viewProfile(obj.Follower)">
           <img class="profile-pic-toolbar" [src]="obj.Follower.Photo" alt="" />
           {{obj.Follower.FirstName}} {{obj.Follower.LastName}}
-        </button>
+        </button> -->
+        <app-profile-card [profile]="obj"></app-profile-card>
       </div>
     </div>
     <div *ngIf="follow.length==0">

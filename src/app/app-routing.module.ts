@@ -20,7 +20,7 @@ const appRoutes: Routes = [
       { path: 'article-read', component: ArticleReadComponent, data: { state: 'article-read' } },
       { path: 'article-feed', component: ArticleFeedComponent, data: { state: 'article-feed' } },
       { path: 'login', component: LoginComponent, data: { state: 'login' } },
-      { path: 'profile', component: UserProfileComponent,canActivate: [AuthguardService], data: { state: 'profile' } },
+      { path: 'profile', component: UserProfileComponent, data: { state: 'profile' } },
       { path: 'setting', component: SettingComponent,canActivate: [AuthguardService], data: { state: 'setting' } },
       { path: 'write', component: WriteComponent, data: { state: 'write' } }
     ]
@@ -31,7 +31,8 @@ const appRoutes: Routes = [
   { path: '**', redirectTo: 'main/article-feed' }
 ];
 @NgModule({
-  imports: [RouterModule.forRoot(appRoutes, { useHash: true })],
+  imports: [RouterModule.forRoot(appRoutes, { scrollPositionRestoration: 'enabled',
+  anchorScrolling: 'enabled', useHash: true, })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

@@ -15,6 +15,12 @@ export class ProfileService {
   constructor(private httpClient: HttpClient) {
   }
 
+  getUser(): Observable<User[]> {
+    const headers = this._headers.append('x-access-token', "init");
+    let url = globalVar.global_api + "/user/";
+    return this.httpClient.get<User[]>(url, { headers: headers, withCredentials: true }).pipe(map(res => { return res; }));
+  }
+
   get(username: string): Observable<User> {
     //this.token = localStorage.getItem('currentUser');
     const headers = this._headers.append('x-access-token', "init");

@@ -35,7 +35,6 @@ export class CommentComponent implements OnInit, AfterViewInit {
     this.fetch();
   }
   fetch() {
-    console.log("calle");
     this.commentService.get(this.articleCode).subscribe(res => {
       //this.comments = res;
       if (res.length > 0) {

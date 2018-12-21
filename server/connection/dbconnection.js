@@ -52,9 +52,18 @@ exports.whereCriteriaGenerator = function (object) {
   return where;
 }
 
-exports.takeLimit = function (number,lastId=null) {
-  var limit = " order by Id desc limit "+ number;
-  var lastId = " and Id > "+lastId;
+exports.takeUpLimit = function (number,lastId=null) {
+  var limit = "  limit "+ number;
+  var lastId = " and Id > "+lastId+ " ";
+  if(lastId){
+    return lastId+limit;
+  }
+ return limit;
+}
+
+exports.takeDownLimit = function (number,lastId=null) {
+  var limit = "  limit "+ number;
+  var lastId = " and Id < "+lastId+ " ";
   if(lastId){
     return lastId+limit;
   }

@@ -1,11 +1,10 @@
-
 <div class="content-read">
   <app-loading *ngIf="!o.Id"></app-loading>
-  <div style="padding-bottom:5px;">
-    <button (click)="goToPrevious()" mat-button style="background: #fff;color:darkslategray;">
+  <div style="padding-bottom:5px;position: fixed;z-index: 99;margin-top:-45px;">
+    <button class="btn-back" (click)="goToPrevious()" mat-raised-button>
       <mat-icon aria-label="Kembali">arrow_back</mat-icon> Kembali
     </button>
-    </div>
+  </div>
   <mat-card class="article-card-read" *ngIf="o.Id">
     <app-article-header *ngIf="o.Writer" [user]="o.Writer" [articlecode]="o.ArticleCode" [articletitle]="o.Title"></app-article-header>
     <app-carousel *ngIf="o.Medias" [medias]="o.Medias"></app-carousel>

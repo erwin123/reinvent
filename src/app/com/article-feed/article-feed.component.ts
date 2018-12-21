@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Article, AuthData, ArticleLikes } from 'src/app/model';
 import { StatemanagementService } from 'src/app/services/statemanagement.service';
 import { ArticleService } from 'src/app/services/article.service';
-import { ProfileService } from 'src/app/services/profile.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as globalVar from '../../global';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -17,18 +16,75 @@ export class ArticleFeedComponent implements OnInit {
   authData: AuthData = new AuthData();
   isLoading: boolean = false;
   constructor(private router: Router,
-    private sanitizer: DomSanitizer, private route: ActivatedRoute, private stateService: StatemanagementService, private artService: ArticleService, private userService: ProfileService) { }
+    private sanitizer: DomSanitizer, private route: ActivatedRoute,
+    private stateService: StatemanagementService, private artService: ArticleService) {
+  }
   articles: Array<Article> = new Array<Article>();
   likeIt: boolean = true;
-  
+  lastScrollPosition: number = 0;
+  searchResult: boolean = false;
+  searchKey: string = "";
   ngOnInit() {
+
     this.isLoading = true;
     this.authData = this.stateService.getAuth();
+    let locLastId = 0;
+    let q = this.stateService.getCurrentLastIdFeed().subscribe(lastId => locLastId = lastId);
+    q.unsubscribe();
+    if (locLastId === 0) {
+      this.artService.getLastMonth().subscribe(res => {
+        res = res.sort((a, b) => {
+          if (a.Id > b.Id) {
+            return -1;
+          } else if (a.Id < b.Id) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+        this.stateService.setArticleStorage(res);
+        setTimeout(() => {
+          this.stateService.setCurrentLastIdFeed(res[0].Id);
+          this.stateService.setCurrentPrevIdFeed(res[res.length - 1].Id);
+        }, 100);
+      });
+    } else {
+      this.artService.routineActiveFeed("1");
+    }
+
     this.route.queryParams.subscribe(params => {
       if (params) {
         if (params['fave'] === "1" && this.authData) {
+          this.articles = new Array<Article>();
           this.artService.getFaveFeed(this.authData.usercode).subscribe(res => {
+            console.log(res);
+            if (res[0]) {
+              this.articles = res;
+              this.articles.forEach(el => {
+                el.TextSanitizer = this.sanitizer.bypassSecurityTrustHtml(el.Text);
+                if (el.Likes && this.authData) {
+                  el.LikeIt = el.Likes.find(f => f.UserCode === this.authData.usercode) ? true : false;
+                  if (el.LikeIt) {
+                    let myLike: ArticleLikes = new ArticleLikes();
+                    myLike = el.Likes.find(f => f.UserCode === this.authData.usercode);
+                    el.Likes = el.Likes.filter(del => del.UserCode !== myLike.UserCode);
+                    el.Likes.unshift(myLike);
+                  }
+                }
+              });
+              this.restoreLastScroll();
+            } else {
+              this.isLoading = false;
+            }
+          }, err => { }, () => { });
+        }
+        else if (params['search']) {
+          this.isLoading = true;
+          this.searchResult = true;
+          this.articles = new Array<Article>();
+          this.artService.globalSearch(params['search']).subscribe(res => {
             this.articles = res;
+            this.searchKey = "'" + params['search'] + "' ditemukan " + this.articles.length + " artikel yang berkaitan isi atau penulisnya.";
             this.articles.forEach(el => {
               el.TextSanitizer = this.sanitizer.bypassSecurityTrustHtml(el.Text);
               if (el.Likes && this.authData) {
@@ -41,9 +97,12 @@ export class ArticleFeedComponent implements OnInit {
                 }
               }
             });
+            this.restoreLastScroll();
           }, err => { }, () => { this.isLoading = false; });
-        } else {
-          this.artService.getAllFeed().subscribe(res => {
+        }
+        else {
+          this.searchResult = false;
+          this.stateService.getArticleStorage().subscribe(res => {
             this.articles = res;
             this.articles.forEach(el => {
               el.TextSanitizer = this.sanitizer.bypassSecurityTrustHtml(el.Text);
@@ -57,72 +116,30 @@ export class ArticleFeedComponent implements OnInit {
                 }
               }
             });
+            this.restoreLastScroll();
           }, err => { }, () => { this.isLoading = false; });
         }
       }
     });
   }
 
-
-  clickLike(articleCode: string) {
-    let userCode: string = this.authData.usercode;
-    if (this.articles.find(art => art.ArticleCode === articleCode).Likes) {
-      if (this.articles.find(art => art.ArticleCode === articleCode).Likes.find(like => like.UserCode === userCode)) {
-        //dislike
-        this.artService.deleteArticleLikes(articleCode, userCode).subscribe(del => {
-          let likes: Array<ArticleLikes> = new Array<ArticleLikes>();
-          likes = this.articles.find(art => art.ArticleCode === articleCode).Likes;
-          likes = likes.filter(delitem => delitem.UserCode !== userCode);
-          this.articles.find(art => art.ArticleCode === articleCode).LikeIt = false;
-          if (likes.length > 0) {
-            this.articles.find(art => art.ArticleCode === articleCode).Likes = likes;
-          } else {
-            this.articles.find(art => art.ArticleCode === articleCode).Likes = undefined;
-          }
-        })
-      } else {
-        //like
-        let artLike: ArticleLikes = new ArticleLikes();
-        artLike.ArticleCode = articleCode;
-        artLike.UserCode = userCode;
-        this.artService.postArticleLikes(artLike).subscribe(add => {
-          this.articles.find(art => art.ArticleCode === articleCode).Likes.unshift(artLike);
-          this.articles.find(art => art.ArticleCode === articleCode).LikeIt = true;
-        });
-      }
-    } else {
-      //like
-      let artLike: ArticleLikes = new ArticleLikes();
-      artLike.ArticleCode = articleCode;
-      artLike.UserCode = userCode;
-      this.artService.postArticleLikes(artLike).subscribe(add => {
-        this.articles.find(art => art.ArticleCode === articleCode).Likes = new Array<ArticleLikes>();
-        this.articles.find(art => art.ArticleCode === articleCode).Likes.push(artLike);
-        this.articles.find(art => art.ArticleCode === articleCode).LikeIt = true;
-      });
-    }
+  morePrev() {
+    this.stateService.setCurrentFeedScroll(document.getElementById('main-scroll').scrollTop);
+    let locPrefId = 0;
+    let q = this.stateService.getCurrentPrevIdFeed().subscribe(prevId => locPrefId = prevId);
+    q.unsubscribe();
+    this.artService.getFeedStream("10", locPrefId.toString(), "0").subscribe(res => {
+      this.stateService.setCurrentPrevIdFeed(res[0].Id);
+      this.stateService.pushArticleStorage(res);
+      this.restoreLastScroll();
+    });
   }
 
-  readItUrl(articleCode: string) {
-    this.router.navigate(['main/article-read'], { queryParams: { pop: articleCode } });
+  restoreLastScroll() {
+    this.stateService.getCurrentFeedScroll().subscribe(sc => {
+      setTimeout(() => {
+        document.getElementById('main-scroll').scrollTo(0, sc);
+      }, 500);
+    });
   }
-
-  // readIt(articleCode: string) {
-
-  //   let parsing: Article = this.articles.find(f => f.ArticleCode === articleCode);
-  //   const dialogRef = this.dialog.open(ArticleComponent, {
-  //     maxWidth: '600px',
-  //     minWidth: '320px',
-  //     width: '88%',
-  //     height: 'auto',
-  //     data: { parsing },
-  //     position: { top: '50px' },
-  //     id:"article-read"
-  //   });
-  //   dialogRef.afterClosed().subscribe(result => {
-
-  //     //this.location.go('/main/article-feed');
-  //     //this.router.navigate(['main/article-feed']);
-  //   });
-  // }
 }

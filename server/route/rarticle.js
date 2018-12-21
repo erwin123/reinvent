@@ -14,6 +14,53 @@ router.get('/', function (req, res, next) {
     });
 });
 
+router.get('/search/:key', function (req, res, next) {
+    if (req.params.key) {
+        art.globalSearch(req.params.key, function (err, rows) {
+            if (err) { res.json(err); }
+            else {
+                
+                rows.forEach((el, idx) => {
+                    console.log(idx);
+                    async.parallel([
+                        (callback) => {
+                            art.getAllMediaArticle({ ArticleCode: el.ArticleCode }, (e1, r1) => {
+                                el.Medias = r1;
+                                callback(e1, r1);
+                            });
+                        },
+                        (callback) => {
+                            writer.getAllUserByCriteria({ UserCode: el.CreatedBy }, (e2, r2) => {
+                                el.Writer = r2[0];
+                                callback(e2, r2);
+                            });
+                        },
+                        (callback) => {
+                            art.getAllLikeArticle({ ArticleCode: el.ArticleCode }, (e3, r3) => {
+                                if (r3.length > 0) {
+                                    el.Likes = r3;
+                                }
+                                callback(e3, r3);
+                            });
+                        }
+                    ], (err, results) => {
+                        if (rows.length - 1 === idx) {
+                            setTimeout(() => {
+                                res.json(rows);
+                            }, 1000);
+                        }
+                    });
+                });
+            }
+            if (rows.length === 0) {
+                res.json(rows);
+            }
+        });
+    } else {
+        res.json('');
+    }
+});
+
 router.post('/cr/', function (req, res, next) {
     if (req.body) {
         art.getAllArticleByCriteria(req.body, function (err, rows) {
@@ -49,8 +96,95 @@ router.post('/cr/', function (req, res, next) {
                         }
                     });
                 });
+            }
+            if (rows.length === 0) {
+                res.json(rows);
+            }
+        });
+    }
+});
 
+router.get('/last/', function (req, res, next) {
+    if (req.body) {
+        art.getAllArticleLastMonth(function (err, rows) {
+            if (err) { res.json(err); }
+            else {
+                rows.forEach((el, idx) => {
+                    async.parallel([
+                        (callback) => {
+                            art.getAllMediaArticle({ ArticleCode: el.ArticleCode }, (e1, r1) => {
+                                el.Medias = r1;
+                                callback(e1, r1);
+                            });
+                        },
+                        (callback) => {
+                            writer.getAllUserByCriteria({ UserCode: el.CreatedBy }, (e2, r2) => {
+                                el.Writer = r2[0];
+                                callback(e2, r2);
+                            });
+                        },
+                        (callback) => {
+                            art.getAllLikeArticle({ ArticleCode: el.ArticleCode }, (e3, r3) => {
+                                if (r3.length > 0) {
+                                    el.Likes = r3;
+                                }
+                                callback(e3, r3);
+                            });
+                        }
+                    ], (err, results) => {
+                        if (rows.length - 1 === idx) {
+                            setTimeout(() => {
+                                res.json(rows);
+                            }, 1000);
+                        }
+                    });
+                });
+            }
+            if (rows.length === 0) {
+                res.json(rows);
+            }
+        });
+    }
+});
 
+router.post('/feed/:limit/:lastid/:direction', function (req, res, next) {
+    if (req.body) {
+        art.getAllArticleFeed(req.body, req.params.limit, req.params.lastid, req.params.direction, function (err, rows) {
+            if (err) { res.json(err); }
+            else {
+                rows.forEach((el, idx) => {
+                    async.parallel([
+                        (callback) => {
+                            art.getAllMediaArticle({ ArticleCode: el.ArticleCode }, (e1, r1) => {
+                                el.Medias = r1;
+                                callback(e1, r1);
+                            });
+                        },
+                        (callback) => {
+                            writer.getAllUserByCriteria({ UserCode: el.CreatedBy }, (e2, r2) => {
+                                el.Writer = r2[0];
+                                callback(e2, r2);
+                            });
+                        },
+                        (callback) => {
+                            art.getAllLikeArticle({ ArticleCode: el.ArticleCode }, (e3, r3) => {
+                                if (r3.length > 0) {
+                                    el.Likes = r3;
+                                }
+                                callback(e3, r3);
+                            });
+                        }
+                    ], (err, results) => {
+                        if (rows.length - 1 === idx) {
+                            setTimeout(() => {
+                                res.json(rows);
+                            }, 1000);
+                        }
+                    });
+                });
+            }
+            if (rows.length === 0) {
+                res.json(rows);
             }
         });
     }
@@ -85,7 +219,7 @@ router.delete('/like/:key', function (req, res, next) {
 });
 
 router.delete('/like/:key1/:key2', function (req, res, next) {
-    art.deleteArticleLikes(req.params.key1,req.params.key2, function (err, rows) {
+    art.deleteArticleLikes(req.params.key1, req.params.key2, function (err, rows) {
         if (err) { res.json(err); }
         else { res.json(rows); }
     });
@@ -126,7 +260,11 @@ router.post('/fave/cr/', function (req, res, next) {
                         }
                     });
                 });
+                if (rows.length === 0) {
+                    res.json(rows);
+                }
             }
+            
         });
     }
 });

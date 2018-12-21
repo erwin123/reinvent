@@ -1,14 +1,17 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Menu, AuthData } from '../../app/model';
+import { Menu, AuthData, User, Article } from '../../app/model';
 import { LoginComponent } from '../com/login/login.component';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { StatemanagementService } from '../services/statemanagement.service';
 import { LoginService } from '../services/login.service';
 import * as globalVar from '../global';
-import { SelectControlValueAccessor } from '@angular/forms';
-
+import { ProfileService } from '../services/profile.service';
+import { ArticleService } from '../services/article.service';
+import { take, distinct } from 'rxjs/operators';
+import { of, Observable } from 'rxjs';
+import { from } from 'rxjs';
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -19,21 +22,16 @@ export class MainComponent implements OnDestroy, OnInit {
   @ViewChild('snav') snav;
   //fillerNav:Menu[] = Menus; 
   baseAsssetUrl: string = globalVar.global_url + "assets/picture/content/";
-  serachValue: string;
+  searchValue: string;
   fillerNav = menus;
   authData: AuthData = new AuthData();
-  fillerContent = Array.from({ length: 50 }, () =>
-    `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-       labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-       laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-       voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-       cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`);
-
+  profiles: Array<User> = new Array<User>();
+  articles: Array<Article> = new Array<Article>();
   private _mobileQueryListener: () => void;
 
   constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher,
     public dialog: MatDialog, private router: Router,
-    private stateService: StatemanagementService,
+    private stateService: StatemanagementService, private artService: ArticleService,
     private userService: LoginService) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -41,7 +39,6 @@ export class MainComponent implements OnDestroy, OnInit {
   }
 
   onActivate(event) {
-
     if (event.login) {
       event.login.subscribe(log => {
         if (log === "login")
@@ -58,6 +55,10 @@ export class MainComponent implements OnDestroy, OnInit {
     }, 16);
   }
 
+  globalSearch() {
+    this.router.navigate(['main/article-feed'], { queryParams: { search: this.searchValue } });
+    this.searchValue = "";
+  }
 
   ngOnInit() {
     if (!this.mobileQuery.matches) {
@@ -68,6 +69,35 @@ export class MainComponent implements OnDestroy, OnInit {
     if (this.authData.auth) {
       this.fillerNav.push({ Text: "Artikel Favorit", Path: "article-feed", Icon: "book", Params: "1" });
     }
+    let locWriters: Array<User> = new Array<User>();
+    setTimeout(() => {
+      let q = this.stateService.getArticleStorage().subscribe(art => {
+        art = art.sort((a, b) => {
+          if (a.Viewed > b.Viewed) {
+            return -1;
+          } else if (a.Viewed < b.Viewed) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+
+        setTimeout(() => {
+          art.forEach((el, idx) => {
+            locWriters.push(el.Writer);
+          });
+          from(locWriters).pipe(distinct((p: User) => p.UserCode)).pipe(take(8)).subscribe(wr => {
+            this.profiles.push(wr);
+          });
+          from(art).pipe(distinct((p: Article) => p.ArticleCode)).pipe(take(5)).subscribe(wr => {
+            this.articles.push(wr);
+          });
+        }, 1000);
+      });
+      setTimeout(() => {
+        q.unsubscribe();
+      }, 5000);
+    }, 1500);
   }
 
   openLoginDialog(): void {
@@ -119,7 +149,7 @@ export class MainComponent implements OnDestroy, OnInit {
 
 let menus: Menu[] = [
   { Text: "Beranda", Path: "article-feed", Icon: "home", Params: "" },
-  { Text: "Belajar & Mengajar", Path: "write", Icon: "school", Params: "" },
+  { Text: "Mulai Berbagi", Path: "write", Icon: "create", Params: "" },
   { Text: "Tentang Kami", Path: "#", Icon: "perm_device_information", Params: "" }
 ]
 

@@ -90,6 +90,7 @@ export class User {
     Photo: string;
     About:string;
     UserCode:string;
+    Follower:Array<Follow>;
 }
 
 export class Account {

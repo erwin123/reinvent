@@ -22,7 +22,6 @@ export class SettingComponent implements OnInit, AfterViewInit {
     let q = forkJoin(this.catService.getAll(), this.catService.getAllCatUser(this.authData.usercode));
     q.subscribe(res => {
       this.cats = leftJoin(res[0], res[1], { key: "CategoryCode" });
-      console.log(this.cats);
     });
   }
   ngAfterViewInit() {

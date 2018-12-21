@@ -74,7 +74,10 @@ import { ArticleHeaderComponent } from './com/article-header/article-header.comp
 import { ArticleReadComponent } from './com/article-read/article-read.component';
 import { LoadingComponent } from './com/loading/loading.component';
 import { RouterExtService } from './services/router-ext.service';
-import { Ng2TrackScrollModule } from 'ng2-track-scroll';
+import { ScrollTrackerModule } from '@nicky-lenaers/ngx-scroll-tracker';
+import { ArticleCardComponent } from './com/article-card/article-card.component';
+import { ProfileCardComponent } from './com/profile-card/profile-card.component';
+import { ArraySortPipePipe } from './pipes/array-sort-pipe.pipe';
 
 
 export function getAuthServiceConfigs() {
@@ -120,7 +123,10 @@ export function getAuthServiceConfigs() {
     ProfilePicComponent,
     ArticleHeaderComponent,
     ArticleReadComponent,
-    LoadingComponent
+    LoadingComponent,
+    ArticleCardComponent,
+    ProfileCardComponent,
+    ArraySortPipePipe
   ],
   imports: [
     BrowserModule,
@@ -133,7 +139,7 @@ export function getAuthServiceConfigs() {
     HttpModule,
     HttpClientModule,
     SocialLoginModule,
-    Ng2TrackScrollModule.forRoot(),
+    ScrollTrackerModule.forRoot(),
     MatCheckboxModule,
     MatCheckboxModule,
     MatButtonModule,

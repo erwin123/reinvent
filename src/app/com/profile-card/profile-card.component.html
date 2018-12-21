@@ -1,0 +1,12 @@
+<div class="follower" *ngIf="obj.Follower" (click)="viewProfile(obj.Follower)">
+  <button mat-icon-button (click)="viewProfile(obj.Follower)">
+    <img class="profile-pic-toolbar" [src]="obj.Follower.Photo" alt="" />
+    {{obj.Follower.FirstName}} {{obj.Follower.LastName}}
+  </button>
+</div>
+<div class="follower" *ngIf="!obj.Follower" (click)="viewProfile(obj)">
+  <button mat-icon-button (click)="viewProfile(obj)">
+    <img class="profile-pic-toolbar" [src]="obj.Photo" alt="" />
+    {{obj.FirstName}} {{obj.LastName}}
+  </button>
+</div>

@@ -1,0 +1,27 @@
+<mat-card class="article-card">
+  <app-article-header [id]="o.ArticleCode" *ngIf="o.Writer" [user]="o.Writer" [articlecode]="o.ArticleCode"
+    [articletitle]="o.Title"></app-article-header>
+  <app-carousel (click)="readItUrl(o.ArticleCode)" *ngIf="o.Medias" [medias]="o.Medias"></app-carousel>
+  <!-- <img mat-card-image src="{{o.MediaPath}}" alt="Photo of a Shiba Inu"> -->
+  <mat-card-content>
+    <p class="article-text" (click)="readItUrl(o.ArticleCode)">
+      {{o.Text | striphtml}}
+    </p>
+    <span style="font-size:12px;">{{o.CreatedDate | date}}</span>
+  </mat-card-content>
+  <mat-card-actions *ngIf="authData">
+    <button title="like toggle" mat-icon-button (click)="clickLike(o.ArticleCode)" [class.like]="o.LikeIt">
+      <mat-icon aria-label="like it">favorite</mat-icon>
+    </button>
+    <span style="font-size: 10px;font-weight: bold;" *ngIf="o.Likes && authData">
+      {{o.Likes.length > 0 ?
+        o.Likes.length > 1 ?
+        o.Likes[0].UserCode === authData.usercode ?
+        'Anda dan '+ (o.Likes.length-1)+' orang lainnya suka' : o.Likes[0].FirstName+' '+o.Likes[0].LastName+' dan '+
+        (o.Likes.length-1)+' orang lainnya suka'
+        : o.Likes[0].UserCode === authData.usercode ?
+        'Anda suka' : o.Likes[0].FirstName+' '+o.Likes[0].LastName+' suka'
+        :''}}
+    </span>
+  </mat-card-actions>
+</mat-card>
